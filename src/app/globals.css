@@ -82,6 +82,10 @@
     1 74%,
     1
   );
+  /* The spring played backwards: a slight swell, then a quick drop, for things that pop back out of view. */
+  --ease-spring-back: cubic-bezier(0.4, -0.45, 0.75, 0);
+  /* Holds, then falls away: fades that should finish with the motion, not before it. */
+  --ease-hold: cubic-bezier(0.64, 0, 0.78, 0);
 }
 
 :root {
@@ -523,7 +527,11 @@ body:has(.feature:focus-visible) [data-recede]:not(:focus-within) {
 }
 
 /* ── Dock ───────────────────────────────────────────────────────
-   Native popover, so it light-dismisses and closes on Escape without JS. */
+   Native popover, so it light-dismisses and closes on Escape without JS.
+   A transition runs with the timing of the state it heads into: opening
+   springs up into place; closing plays that spring back, swelling slightly
+   and then dropping into the pill as it fades. overlay and display keep it
+   in the top layer until the exit has finished. */
 
 .dock[popover] {
   inset: auto;
@@ -536,9 +544,9 @@ body:has(.feature:focus-visible) [data-recede]:not(:focus-within) {
   scale: 0.9;
   transform-origin: bottom center;
   transition:
-    opacity var(--dur-fast) linear,
-    translate var(--dur-spring) var(--ease-spring),
-    scale var(--dur-spring) var(--ease-spring),
+    opacity var(--dur-base) var(--ease-hold),
+    translate var(--dur-base) var(--ease-spring-back),
+    scale var(--dur-base) var(--ease-spring-back),
     overlay var(--dur-base) allow-discrete,
     display var(--dur-base) allow-discrete;
 }
@@ -546,6 +554,12 @@ body:has(.feature:focus-visible) [data-recede]:not(:focus-within) {
   opacity: 1;
   translate: -50% 0;
   scale: 1;
+  transition:
+    opacity var(--dur-fast) linear,
+    translate var(--dur-spring) var(--ease-spring),
+    scale var(--dur-spring) var(--ease-spring),
+    overlay var(--dur-base) allow-discrete,
+    display var(--dur-base) allow-discrete;
 }
 @starting-style {
   .dock[popover]:popover-open {
