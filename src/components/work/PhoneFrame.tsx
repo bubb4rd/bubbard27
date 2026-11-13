@@ -12,12 +12,15 @@ export const PHONE_BEZEL = 0.028;
  * to the top of the media, keeping the status bar under the island.
  */
 export default function PhoneFrame({ children }: { children: ReactNode }) {
+  // The display is a grid cell, stretched to the space inside the bezel: Safari resolves a percentage
+  // height against the whole frame when its height comes from aspect-ratio, which ran the display
+  // over the bottom bezel.
   return (
     <div
-      className="@container relative w-full overflow-hidden bg-device [border-radius:13.68%/6.29%]"
+      className="@container relative grid w-full overflow-hidden bg-device [border-radius:13.68%/6.29%]"
       style={{ aspectRatio: PHONE_ASPECT, padding: `${PHONE_BEZEL * 100}%` }}
     >
-      <div className="relative h-full w-full overflow-hidden rounded-[10.9cqw] bg-device">
+      <div className="relative overflow-hidden rounded-[10.9cqw] bg-device">
         {children}
         {/* Sized to just cover the island a simulator screenshot already has, so the two never show doubled. */}
         <span aria-hidden className="absolute left-1/2 top-[3.2cqw] h-[9.2cqw] w-[30.8cqw] -translate-x-1/2 rounded-full bg-black" />

@@ -14,13 +14,15 @@ export const SCREEN_ASPECT = 1 / ((1 - 2 * SCREEN_BEZEL) / 1.6 + 2 * SCREEN_BEZE
  * units of its own width, so it scales cleanly at any size.
  */
 export default function ScreenFrame({ children }: { children: ReactNode }) {
+  // The display is a grid cell, stretched to the space inside the bezel: Safari resolves a percentage
+  // height against the whole frame when its height comes from aspect-ratio.
   return (
     <div
-      className="@container relative w-full bg-device shadow-(--shadow-lifted) [border-radius:2.6%/4.07%]"
+      className="@container relative grid w-full bg-device shadow-(--shadow-lifted) [border-radius:2.6%/4.07%]"
       style={{ aspectRatio: SCREEN_ASPECT, padding: `${SCREEN_BEZEL * 100}%` }}
     >
       <span aria-hidden className="absolute left-1/2 top-[0.6cqw] size-[0.6cqw] -translate-x-1/2 rounded-full bg-white/10" />
-      <div className="relative h-full w-full overflow-hidden rounded-[0.8cqw] bg-device">{children}</div>
+      <div className="relative overflow-hidden rounded-[0.8cqw] bg-device">{children}</div>
     </div>
   );
 }
