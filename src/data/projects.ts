@@ -84,7 +84,7 @@ export const projects: Project[] = [
     title: "Elovate SR",
     subtitle: "Warzone rank tracker",
     description:
-      "Full-stack Call of Duty: Warzone rank tracker with a live leaderboard, cloud-synced progression calculator, and OCR-powered stat extraction from match screenshots.",
+      "Call of Duty ranked play companion with live leaderboards, cloud-synced progression, and so much more. Powered by OCR and stat extraction from your own Call of Duty matches.",
     tags: ["Next.js", "TypeScript", "Supabase", "Google Cloud Vision"],
     href: "https://elovatesr.com",
     kind: "Web Development",
@@ -103,11 +103,11 @@ export const projects: Project[] = [
     sections: [
       {
         heading: "The spark",
-        body: "I treated it like a real product and gave myself a launch date, September 7, 2026, with a checklist to hit first: a live board, Discord and email sign-in, onboarding, synced climb sessions, player profiles, and at least a full day of cutoff history. Warzone shipped first on purpose. Multiplayer stays “coming soon” until it's just as solid.",
+        body: "I wanted to make it a real product, so I treated it like one from day one. It launched in early September 2026 with Discord integration, player profiles, and seasons of historical ranked data. Multiplayer is coming soon!",
       },
       {
         heading: "The look",
-        body: "elovate is dark-only, with a lowercase wordmark and a gold mark. I wrote a short voice guide before most of the UI: plain sentences, no hype words, and every claim backed by a number. Profiles come in rank-inspired themes, climb sessions export as share cards, and on mobile your session tucks into a floating button so the board gets the whole screen.",
+        body: "I wanted to stick with a dark theme and a gold primary color. Profiles come with rank-inspired themes, and sessions can be exported as custom cards. App-wide reputation is a thing too, voted on by site users, with rate limits included.",
         media: [
           { type: "image", src: "/media/elovatesr/player-profile.jpg", aspect: "1920/1200", caption: "Rank-themed player profile" },
           { type: "image", src: "/media/elovatesr/mobile-session.jpg", aspect: "600/1298", frame: "phone", caption: "Climb session on mobile" },
@@ -115,28 +115,31 @@ export const projects: Project[] = [
       },
       {
         heading: "The engine",
-        body: "Every 15 minutes a Supabase Edge Function pulls the Top 250 and saves a snapshot, so the 24-hour drift comes from real history, never seed data. If the cutoff jumps 50+ SR, it posts to Discord. Climb sessions save on your device first and sync to your account in the background. Screenshot scanning runs your SR breakdown through Google Cloud Vision and a parser I wrote.",
+        body: "A timed cron job runs on our database and edge function services, so we get reliable data every 15 minutes. That's about the length of an average Call of Duty Ranked Resurgence match, so it fits perfectly. Trends (weekly, monthly, and max) are backed by real history, never seeded. Cutoff alerts go out to eligible members in our Discord server, based on the average max win on the Top 250 leaderboard, which sits around 24 SR (Skill Rating). Climb sessions save locally before syncing to your account, and our Screenshot Scanning technology takes your SR breakdown straight from your screen, using Google Cloud Vision and a custom parser.",
         media: [
           { type: "image", src: "/media/elovatesr/top-250-board.jpg", aspect: "1920/1200", caption: "Top 250 board and cutoff history" },
         ],
       },
       {
         heading: "The snags",
-        body: "The OCR was the messy part. Vision reads the two columns of the breakdown separately, so my first parser matched numbers to the wrong rows, and a red −110 on a red background kept coming back as “HO”. I rewrote it to read in document order and added a decoder for the usual misreads. Big screenshots also hit Netlify's upload limit, so now they get compressed in the browser first.",
+        body: "Admittedly, the OCR implementation was a messy, long-term investment. Vision tries to read the two columns of the breakdown separately, so my early iterations matched numbers to the wrong rows, resulting in incorrect SR gains and losses. Not acceptable. I rewrote it to read in document order first and added a decoder for occasional misreads. Larger screenshots were hitting upload limits, so I decided to compress them in the browser before uploading.",
         media: [
           { type: "image", src: "/media/elovatesr/screenshot-upload.jpg", aspect: "1920/1200", caption: "Climb calculator with screenshot upload" },
         ],
       },
       {
         heading: "The safety net",
-        body: "Live data comes with edge cases. A cut-off feed would show a wildly wrong cutoff, so a snapshot needs 240+ players before the board trusts it. Old fallbacks expire so a real season reset can't hide behind stale numbers, and seasons run as a little state machine that pauses polling between seasons while the final board stays up.",
+        body: "Live data comes with edge cases. An incomplete feed could show a wildly wrong cutoff, so I wrote rules that require a snapshot to include at least 240 players before the board trusts its results. Old fallbacks expire, so a season reset can't hide behind stale numbers and every new season gets a fresh start. The seasons run on a tiny state machine that pauses polling between seasons, while the final board shows the last season's data.",
         media: [
           { type: "image", src: "/media/elovatesr/mobile-board.jpg", aspect: "600/1298", frame: "phone", caption: "Frozen cutoff on mobile" },
         ],
       },
       {
         heading: "The road ahead",
-        body: "It's live at elovatesr.com and between seasons right now, showing the Season 6 final board. Next up: a desktop app with a screenshot keybind and an overlay calculator (the waitlist is open), a Discord bot with /cutoff and /status, and Multiplayer.",
+        body: [
+          { text: "elovatesr.com", href: "https://elovatesr.com" },
+          " is live and currently between Ranked seasons while Modern Warfare 4 integration begins, so the site shows the historical data from Black Ops 7's final Ranked season, Season 6. We're looking ahead at a desktop app with a lot of really cool features, like screenshot keybinds and an overlay calculator, and its waitlist is open. Our Discord is always running, with custom integrations including profiles and other related features. Feel free to join us there for more information!",
+        ],
         media: [
           { type: "image", src: "/media/elovatesr/desktop-waitlist.jpg", aspect: "1920/1200", caption: "Elovate Desktop waitlist" },
         ],
@@ -151,7 +154,7 @@ export const projects: Project[] = [
     title: "WKCC Perks",
     subtitle: "iOS application",
     description:
-      "Built from the ground up in Swift and SwiftUI: a member-to-member perks and business directory.",
+      "Originally built from the ground up in Swift and SwiftUI, WKCC Perks is coming to every mobile app store, with Google Play up next! WKCC members enjoy member-to-member perks and a connected business directory.",
     tags: ["Swift", "SwiftUI", "REST APIs", "iOS"],
     href: "https://apps.apple.com/us/app/wkcc-perks/id6795765162",
     kind: "iOS Development",
@@ -179,7 +182,7 @@ export const projects: Project[] = [
         body: [
           "The ",
           { text: "Wilmette/Kenilworth Chamber of Commerce", href: "https://www.wilmettekenilworth.com" },
-          " wanted to move away from their archaic way of getting members local deals from local chamber businesses. Instead of keeping their current physical, mail-based system, we decided to upgrade into a digital application. The ask was intentionally small: sign in, find a deal or business, use the deal.",
+          " wanted to move away from their original way of getting members local deals from chamber organizations. It started out as a physical, mail-based system, so they decided to upgrade to the digital space. They asked about a mobile app, starting with iOS and with Android on the way, where members could do something intentionally small: sign in, find deals, and use them.",
         ],
         media: [
           { type: "image", src: "/media/wkcc-perks/not-a-member.jpg", aspect: "886/1926", alt: "Onboarding: not a WKCC member yet, with sign-in and join" },
@@ -189,7 +192,7 @@ export const projects: Project[] = [
       },
       {
         heading: "Deals that find you",
-        body: "Member businesses can now hunt for deals in their community, or post one. Once a deal goes live, all members with the WKCC Perks app receive a notification, so nobody has to keep checking the app to catch a new deal.",
+        body: "Members can now hunt for deals in their community or post one. Once a deal is live, every member with the app receives a notification. Members no longer have to go out of their way to keep up and catch new deals, because the information comes right to them.",
         media: [
           { type: "image", src: "/media/wkcc-perks/notifications-prompt.jpg", aspect: "886/1921", alt: "Asking to send deal notifications" },
           { type: "image", src: "/media/wkcc-perks/hot-deals-home.jpg", aspect: "886/1921", alt: "A new hot deal at the top of home" },
@@ -201,9 +204,9 @@ export const projects: Project[] = [
         body: [
           "WKCC Perks is live on the ",
           { text: "App Store", href: "https://apps.apple.com/us/app/wkcc-perks/id6795765162" },
-          ". All WKCC members are encouraged to download today! If you are not a Wilmette/Kenilworth Chamber of Commerce member, ",
+          ". All WKCC members are encouraged to download it. If you're not a current member, feel free to ",
           { text: "sign up", href: "https://www.wilmettekenilworth.com/members/join-now" },
-          " today!",
+          " today. Android users, don't worry: the app is on its way to the Google Play Store.",
         ],
         media: [
           { type: "image", src: "/media/wkcc-perks/launch-screen.jpg", aspect: "886/1926", alt: "WKCC Perks launch screen" },
@@ -218,7 +221,7 @@ export const projects: Project[] = [
     title: "Vaultair",
     subtitle: "Password manager",
     description:
-      "Encrypted, local-first desktop vault for gaming and online accounts, with passwords, MFA codes and an identity relationship map. Live on Windows, with Mac support coming soon.",
+      "Encrypted, local-first desktop vault for gaming and online accounts, including passwords, MFA codes, identity relationships, and much more. Live on Windows right now.",
     tags: ["Rust", "TypeScript", "Tauri", "SQLCipher", "Argon2id", "GitHub Actions"],
     href: "https://github.com/bubb4rd/vaultair",
     kind: "Software Development",
@@ -238,32 +241,32 @@ export const projects: Project[] = [
     sections: [
       {
         heading: "Non-negotiables",
-        body: "No account, no server, no cloud. The vault lives on your disk and the app never touches the network. That promise shaped everything, down to bundling Microsoft's WebView2 installer so setup works offline, even though it pushes the download to about 220 MB. I also wrote down what it will never do: no auto-login, no game client injection, no account trading.",
+        body: "No account, no server, no cloud. The vault lives on your disk, and the app never touches the network. That promise shaped everything, from how I built it to how it installs.",
         media: [
           { type: "image", src: "/media/vaultair/lock-screen.jpg", aspect: "2400/1500", caption: "Unlocking with the master password" },
         ],
       },
       {
         heading: "First impressions",
-        body: "It's dark-only and quiet on purpose: charcoal surfaces, hairline borders, one blue accent. Green only ever means secure, and status is always an icon plus text, never just a color. The relationship map lays your identities out as a graph you can walk with a keyboard, and it switches to a list when the map gets huge or you've turned on reduced motion.",
+        body: "I wanted to stick with a dark-only theme and keep the elements quiet on purpose: charcoal surfaces, hairline borders, and one primary accent. Every color has a meaning, like green for success and security. Status is always an icon plus a label, never just a color, so it's always explainable and understandable. A relationship map lays out your identities as a graph you can walk through with your keyboard, and list view is always an option if your map gets too large.",
         media: [
           { type: "image", src: "/media/vaultair/relationship-map.jpg", aspect: "2400/1500", caption: "Relationship map, focused view" },
         ],
       },
       {
         heading: "Behind the glass",
-        body: "It's Tauri and Rust with a React front end, and I treat the UI as semi-trusted. All the crypto stays in Rust: Argon2id turns your master password into a key that unlocks a random vault key, SQLCipher encrypts the database, and passwords and codes get sealed again on their own. Copying a secret never hands it to the UI, and the clipboard only clears itself if you haven't copied something else since.",
+        body: "It's built with Tauri and Rust, with a React front end. All the cryptography stays in Rust: Argon2id turns your master password into a key that unlocks your vault, SQLCipher encrypts your database, and passwords and codes get sealed again on their own. Copying a secret never hands it to the UI, and the clipboard clears itself on a timer, so passwords don't stick around.",
         media: [
           { type: "image", src: "/media/vaultair/account-detail.jpg", aspect: "2400/1500", caption: "Account detail with sealed secrets" },
         ],
       },
       {
         heading: "Growing pains",
-        body: "Windows fought back a few times. SQLCipher wouldn't build until I switched to Strawberry Perl, locally and in CI. Encrypted databases refuse SQLite's backup API, so backups copy the raw bytes, then get read back and verified before they count. Windows Hello unlock got a short spike first, to prove its signature stays the same across reboots before I trusted it with a key.",
+        body: "SQLCipher wouldn't build until I made the decision to switch to Strawberry Perl. Encrypted databases refuse SQLite's backup API, so backups copy the raw bytes, then get read back and verified before they count. Windows Hello had a rocky start: it needed to prove its signatures stay consistent across restarts and crashes before it could be trusted with keys.",
       },
       {
         heading: "To be continued",
-        body: "v0.1.0 is out as a private beta on GitHub, and the repo went public in October. Next up: health history on the dashboard, passkeys and an updater, then browser fill, which is still working through a 22-point security review. It runs on Windows today, and Mac support is on the way.",
+        body: "A private beta has been available on GitHub since early October 2026. It stays in beta until I'm verified with Azure and the app is signed, and after that we'll release our first public version and keep iterating. A few features are planned, like health history, dashboards, passkeys, and the one I'm most excited about: browser fill, so you don't have to copy and paste your username and password every time you sign in. Run it on Windows today!",
         media: [
           { type: "image", src: "/media/vaultair/accounts-list.jpg", aspect: "2400/1500", caption: "Every account, with its security status" },
         ],
@@ -275,7 +278,7 @@ export const projects: Project[] = [
     title: "Gliide",
     subtitle: "Job search app",
     description:
-      "In-house job tracking, resume tailoring and application powerhouse for Mac. Built for students, early-career developers and anyone finding their career.",
+      "Tailor your resume, honestly, with the AI agents you already use. Fit scoring, one-page resumes, a daily job feed, application tracking, and interview prep, all in one app for Mac. Built for students, early-career developers, and anyone finding their career.",
     tags: ["Rust", "Tauri", "Svelte", "TypeScript", "SQLite", "Typst"],
     href: "https://github.com/bubb4rd/gliide",
     upcoming: true,
@@ -296,14 +299,14 @@ export const projects: Project[] = [
     sections: [
       {
         heading: "The fine print",
-        body: "A few rules came first and never moved. The AI never scores you; code does, from the text that actually renders. Nothing gets invented, since every rewrite is checked against your own experience. Your master resume never changes. And the PDF is read back and rescored after export, so “ATS-readable” is something it checks, not something it claims.",
+        body: "A few rules came first, and they never moved. The AI never scores you; code does, from the text that actually renders. Nothing gets invented, since every rewrite is checked against your experience bank, and your master resume never changes unless you save to it. The PDF even gets read back and rescored after export, so “ATS-readable” is something Gliide checks, not something it claims. There's no telemetry either: nothing about you or your usage ever gets sent back to me.",
         media: [
           { type: "image", src: "/media/gliide/welcome-rules.jpg", aspect: "1600/1000", caption: "The rules on first launch" },
         ],
       },
       {
         heading: "The look",
-        body: "I called the design system Paper & Ink: warm paper, graphite text and one cobalt accent. The resume is the only thing with real depth, like a sheet on a desk, and everything around it stays flat and fast like a native Mac tool. Color only shows up when it means something. Green is points gained, amber is what got left out and why.",
+        body: "I called the design system Paper & Ink: warm paper, graphite text, and one cobalt accent. The resume is the only thing with real depth, like a sheet on a desk, while everything around it stays flat and fast, like a native Mac tool. Colors only show up when they mean something: green for points gained, and amber for what got left out and why. Light and dark themes are both included.",
         media: [
           { type: "image", src: "/media/gliide/cover-letter-light.jpg", aspect: "2400/1500", caption: "Light theme" },
           { type: "image", src: "/media/gliide/cover-letter-dark.jpg", aspect: "2400/1500", caption: "Dark theme" },
@@ -311,21 +314,25 @@ export const projects: Project[] = [
       },
       {
         heading: "The engine",
-        body: "It's a Rust core with a Svelte front end in Tauri. Typst is built in as a library, so the page rebuilds in about 40 ms with the same line breaks on every machine. It runs on your own AI subscription instead of API keys, and the model work is split in two, reading the posting once and then suggesting edits, which got the first score on screen in seconds instead of minutes.",
+        body: "Gliide runs on a Rust core with a Svelte front end, built with Tauri 2. Typst is built in as a library, so your page recompiles in about 8 ms after an edit, with the same line breaks on every machine. There are no API keys: every model call goes through the agent you already sign in to, whether that's Claude Code, Codex, or Antigravity, on your own subscription. The model work is split in two, reading the posting once and then streaming edits, so your first score shows up in seconds instead of minutes. Settings even shows what your model calls cost, by day, feature, and model.",
         media: [
-          { type: "image", src: "/media/gliide/setup-agent.jpg", aspect: "1600/1000", caption: "Connecting your own Claude Code plan" },
+          { type: "image", src: "/media/gliide/setup-agent.jpg", aspect: "1600/1000", caption: "Connecting Claude Code, one of three supported agents" },
         ],
       },
       {
         heading: "The snags",
-        body: "Early tests showed edits that read keyword-stuffed and played it too safe, and summaries getting cut to fit the page. I'm still tuning that. The format check also wasn't reading the real PDF at first, until I wrote an extractor that catches things like a skill broken across a hyphen. Before going public I rebuilt the repo from a clean history, because old commits still had real job postings in them.",
+        body: "Early tests showed edits that read keyword-stuffed or played it too safe, plus summaries getting cut to fit the page, which I'm still tuning. The format check also wasn't reading the real PDF at first, so I wrote an extractor that catches things like a skill broken across a hyphen. Before going public, I rebuilt the repo from a clean history, because old commits still had real job postings in them.",
         media: [
           { type: "image", src: "/media/gliide/prototype-mission-control.jpg", aspect: "1960/1250", caption: "Prototype: mission control" },
         ],
       },
       {
         heading: "The road ahead",
-        body: "It's open source and signed for Mac, on version 0.2.1 with in-app updates, and still early. The job feed, cover letters and application tracking are in. Windows, iOS and more AI agents are next.",
+        body: [
+          "Gliide is open source, signed, and notarized for Macs with Apple Silicon. It's currently on version 0.7.1 and updates itself right in the app. Beyond tailoring, it now has a daily job feed that pulls from boards like Greenhouse, Lever, and Ashby, plus cover letters, application tracking, and interview prep with practice, nudges, and debriefs. Windows and iOS are up next on the same Rust core. Feel free to check out the ",
+          { text: "source on GitHub", href: "https://github.com/bubb4rd/gliide" },
+          "!",
+        ],
         media: [
           { type: "image", src: "/media/gliide/setup-feed-dark.jpg", aspect: "1600/1000", caption: "Setting up the daily job feed" },
         ],
@@ -337,7 +344,7 @@ export const projects: Project[] = [
     title: "PantryPulse",
     subtitle: "Recipe tracking app",
     description:
-      "Full-stack recipe app for discovering meals from available ingredients.",
+      "Full-stack recipe app for discovering meals from the ingredients you already have, with diet, allergy, and calorie filters, plus nutrition on every recipe.",
     tags: ["React", "Tailwind CSS", "Firebase", "REST APIs"],
     href: "https://pantry-pulse.netlify.app",
     kind: "Web Development",
@@ -356,21 +363,21 @@ export const projects: Project[] = [
     sections: [
       {
         heading: "The spark",
-        body: "I first built it in June 2024, and honestly, it looked more finished than it was. Search worked, but the nutrition panel was a placeholder, the fat number on every card was quietly reading protein, and the recipe popup still had sample text in it. It taught me that a nice UI isn't a product until every number on it is right.",
+        body: "I first built PantryPulse in June 2024, and honestly, it looked more finished than it was. Search worked, but the nutrition panel was a placeholder, the fat number on every card was quietly reading protein, and the recipe popup still had sample text in it. It taught me that a nice UI isn't a product until every number on it is right.",
         media: [
           { type: "image", src: "/media/pantrypulse/v1-results.jpg", aspect: "2160/1350", caption: "2024 results: fat reading protein" },
         ],
       },
       {
         heading: "The rewrite",
-        body: "In 2026 I rebuilt it on Vite, React and Tailwind 4, kept the original fonts, and finished what version one skipped: real nutrition on every card and a proper recipe view. I added Google sign-in with Firebase so you can save recipes and your allergens, and those allergens fill in your filters automatically next time.",
+        body: "In 2026 I rebuilt it on Vite, React, and Tailwind 4, kept the original fonts, and finished what version one skipped: real nutrition on every card and a proper recipe view. I also added Google sign-in with Firebase, so you can save recipes and your allergens, and those allergens fill in your filters automatically next time.",
         media: [
           { type: "image", src: "/media/pantrypulse/recipe-details.jpg", aspect: "2160/1350", caption: "Recipe details dialog" },
         ],
       },
       {
         heading: "The look",
-        body: "It got a warmer ember and cream palette with a dark mode. Search is the whole product, so it gets the room: popular ingredient chips, a sticky filter sidebar on desktop, a filter drawer on mobile, and real loading, empty and error states instead of blank screens.",
+        body: "I wanted a warmer ember and cream palette, with a dark mode included. Search is the whole product, so it gets the room: popular ingredient chips, a sticky filter sidebar on desktop, a filter drawer on mobile, and real loading, empty, and error states instead of blank screens.",
         media: [
           { type: "image", src: "/media/pantrypulse/dark-mode.jpg", aspect: "2160/1350", caption: "Dark mode" },
           { type: "image", src: "/media/pantrypulse/mobile-filters.jpg", aspect: "600/1300", frame: "phone", caption: "Filter drawer on mobile" },
@@ -378,14 +385,14 @@ export const projects: Project[] = [
       },
       {
         heading: "The snags",
-        body: "Typing fast brought results back out of order, so every search now carries an ID and stale responses get dropped. Dragging the calorie slider spammed the API until I debounced filter changes. Edamam's image links expire, so saved recipes fall back gracefully, and I scrubbed real API keys out of the example config.",
+        body: "Typing fast brought results back out of order, so every search now carries an ID, and stale responses get dropped. Dragging the calorie slider spammed the API until I debounced filter changes. Edamam's image links expire, so saved recipes fall back gracefully, and I scrubbed real API keys out of the example config.",
         media: [
           { type: "video", src: "/media/pantrypulse/calorie-slider.mp4", small: "/media/pantrypulse/calorie-slider-720.mp4", aspect: "1440/900", poster: "/media/pantrypulse/calorie-slider.jpg", caption: "Debounced calorie slider" },
         ],
       },
       {
         heading: "The road ahead",
-        body: "The rebuild is live on Netlify. The API key still ships to the browser, which is fine for a demo but not for real traffic, so putting requests behind a small proxy is the next thing I'd fix.",
+        body: "The rebuild is live on Netlify, so feel free to give it a try! The API key still ships to the browser, which is fine for a demo but not for real traffic, so putting requests behind a small proxy is the next thing on my list.",
       },
     ],
   },
@@ -393,7 +400,7 @@ export const projects: Project[] = [
     id: "borgwithus",
     title: "Borgwithus",
     subtitle: "Cocktail generator",
-    description: "A dynamic drink name generator with its own BORG AI, now averaging around 100 users.",
+    description: "A drink name generator with its own BORG AI, accounts, a community name wall, and so much more. Now averaging around 100 users.",
     tags: ["React", "CSS", "HTML", "Netlify"],
     href: "https://borgwithus.xyz",
     kind: "Web Development",
@@ -413,14 +420,14 @@ export const projects: Project[] = [
     sections: [
       {
         heading: "The spark",
-        body: "What started as a list of puns turned into a real app. You can make an account, like or dislike names, and submit up to three of your own a day to the public wall, with an admin approving each one before it goes up. Then I added BORG AI for names nobody has thought of yet.",
+        body: "What started as a list of puns turned into a real app. You can make an account, like or dislike names, and submit up to three of your own a day to the public wall, with an admin approving each one before it goes up. Then I added BORG AI for the names nobody has thought of yet.",
         media: [
           { type: "image", src: "/media/borgwithus/name-wall-screen.jpg", aspect: "2400/1500", caption: "Submitting names and the community wall" },
         ],
       },
       {
         heading: "The look",
-        body: "It's loud on purpose: big condensed type, ink and paper colors and an acid accent. The jug builder breaks it into three steps, name it, dye it, keep it, with a real photo for every flavor. I ran an accessibility pass on phones, which is how I found the jug and its controls never fit on screen at the same time.",
+        body: "It's loud on purpose: big condensed type, ink and paper colors, and an acid accent. The jug builder breaks naming into three steps (name it, dye it, keep it), with a real photo for every flavor. I ran an accessibility pass on phones, which is how I found out the jug and its controls never fit on screen at the same time.",
         media: [
           { type: "image", src: "/media/borgwithus/recipe-screen.jpg", aspect: "2400/1500", caption: "How to borg, in three steps" },
           { type: "video", src: "/media/borgwithus/jug-builder-phone.mp4", aspect: "488/1054", poster: "/media/borgwithus/jug-builder-phone-poster.jpg", frame: "phone", caption: "Jug builder on a phone" },
@@ -428,18 +435,18 @@ export const projects: Project[] = [
       },
       {
         heading: "The engine",
-        body: "The front end is React on Netlify, with Supabase handling accounts, the database and edge functions. BORG AI runs an open-source model on Runpod that scales to zero when nobody's using it, and code double-checks every name so it actually swaps a sound for “borg” and isn't a repeat. There's an admin studio for rating names and exporting training data to fine-tune the model.",
+        body: "The front end is React on Netlify, with Supabase handling accounts, the database, and edge functions. BORG AI runs an open-source model on Runpod that scales to zero when nobody's using it, and code double-checks every name, so it actually swaps a sound for “borg” and isn't a repeat. There's also an admin studio for rating names and exporting training data to fine-tune the model.",
         media: [
           { type: "image", src: "/media/borgwithus/borg-ai-beta-notice.jpg", aspect: "1200/750", caption: "BORG AI beta notice" },
         ],
       },
       {
         heading: "The snags",
-        body: "In October 2026 I audited the whole thing and found real holes. Likes could carry any text straight into the public top ten, failed AI calls always got refunded, which meant unlimited free generations, and “Sponge Borg” could show as approved but never reach the board because it collided with “SpongeBorg”. Each got a fix at the database level, plus password reset, which somehow never existed.",
+        body: "In October 2026 I audited the whole thing and found some real holes. Likes could carry any text straight into the public top ten, failed AI calls always got refunded (which meant unlimited free generations), and “Sponge Borg” could show as approved but never reach the board, because it collided with “SpongeBorg”. Each one got a fix at the database level, plus password reset, which somehow never existed.",
       },
       {
         heading: "The road ahead",
-        body: "It's still live and still getting updates. Next I'm testing the classic generator against the jug builder to see which one gets more people to actually name a borg.",
+        body: "Borgwithus is still live and still getting updates. Next, I'm testing the classic generator against the jug builder to see which one gets more people to actually name a borg. Feel free to go name your own!",
         media: [
           { type: "image", src: "/media/borgwithus/generator-screen.jpg", aspect: "2400/1500", caption: "Classic generator, the variant under test" },
         ],
@@ -451,7 +458,7 @@ export const projects: Project[] = [
     title: "BUBBARD Design",
     subtitle: "Freelance graphic design",
     description:
-      "Digital graphics and visual content that pull hundreds of likes per post and impressions in the tens to hundreds of thousands. Direct client collaboration to deliver designs aligned with brand vision across social platforms.",
+      "Digital graphics and visual content that pull hundreds of likes per post, with impressions in the tens to hundreds of thousands. I work directly with clients to deliver designs that fit their brand across social platforms.",
     tags: ["Adobe Creative Suite", "Figma", "Social Media"],
     href: "https://be.net/bubbard/",
     kind: "Design",
@@ -462,11 +469,11 @@ export const projects: Project[] = [
     sections: [
       {
         heading: "What I make",
-        body: "BUBBARD is the name I design under. Most of the work lives on social: player graphics and posters made to stop a scroll, plus logos and the occasional print job. Posts pull hundreds of likes, and impressions run from the tens of thousands into the hundreds of thousands. I work directly with the people I'm designing for, so the style bends to their brand.",
+        body: "BUBBARD is the name I design under. Most of the work lives on social: player graphics and posters made to stop a scroll, plus logos and the occasional print job. Posts pull hundreds of likes, with impressions running from the tens of thousands into the hundreds of thousands. I work directly with the people I'm designing for, so the style bends to fit their brand.",
       },
       {
         heading: "Sports graphics",
-        body: "The sports pieces are built in layers: a cut-out athlete, a textured or halftone background, big condensed type, and a stat block when the numbers are worth bragging about. They have to land at phone size in about a second, so the name and the hero image always win, and the small details reward a second look.",
+        body: "The sports pieces are built in layers: a cut-out athlete, a textured or halftone background, big condensed type, and a stat block when the numbers are worth bragging about. They have to land at phone size in about a second, so the name and the hero image always win, while the small details reward a second look.",
       },
       {
         heading: "Print",
@@ -477,7 +484,7 @@ export const projects: Project[] = [
       },
       {
         heading: "Logos and mascots",
-        body: "I also design marks and mascots, like the Banana logo: a gaming-style character with a shield, lightning and chrome type. The goal with a mark like that is to read as a tiny avatar and still hold up big on a banner.",
+        body: "I also design marks and mascots, like the Banana logo: a gaming-style character with a shield, lightning, and chrome type. The goal with a mark like that is to read as a tiny avatar and still hold up big on a banner. Feel free to reach out if you need one!",
         media: [
           { type: "image", src: "/images/banana-project.jpg", aspect: "1/1" },
         ],
