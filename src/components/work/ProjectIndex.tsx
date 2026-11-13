@@ -1,5 +1,6 @@
 "use client";
 
+import posthog from "posthog-js";
 import type { MouseEvent } from "react";
 import AppIcon from "@/components/AppIcon";
 import type { Project } from "@/data/projects";
@@ -19,6 +20,7 @@ export default function ProjectIndex({ projects, label }: { projects: Pick<Proje
     card.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
     card.focus({ preventScroll: true });
     history.replaceState(history.state, "", `#${id}`);
+    posthog.capture("project_index_selected", { project_id: id });
   }
 
   return (

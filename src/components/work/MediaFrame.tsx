@@ -1,11 +1,13 @@
 "use client";
 
 import Image, { getImageProps } from "next/image";
+import posthog from "posthog-js";
 import { useEffect, useRef, useState } from "react";
 import { copy } from "@/content/copy";
 import type { ProjectMedia } from "@/data/projects";
 import { aspectRatio } from "@/lib/aspect";
 import { useMediaQuery } from "@/lib/useMediaQuery";
+import { logPortfolioInteraction } from "@/lib/posthogLogger";
 import { useSaveData } from "@/lib/useSaveData";
 
 /** AV1 in MP4; level 4.0 covers 1080p at 30 fps, so browsers without hardware for it pick the H.264 source. */
@@ -207,9 +209,13 @@ function Clip({
     if (video.paused) {
       setChoice(true);
       video.play().catch(() => {});
+      posthog.capture("media_playback_toggled", { action: "play" });
+      logPortfolioInteraction("media playback control used", { action: "play" });
     } else {
       setChoice(false);
       video.pause();
+      posthog.capture("media_playback_toggled", { action: "pause" });
+      logPortfolioInteraction("media playback control used", { action: "pause" });
     }
   }
 

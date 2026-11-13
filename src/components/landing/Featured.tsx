@@ -1,11 +1,15 @@
+"use client";
+
 import { ArrowUpRight } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
+import posthog from "posthog-js";
 import type { ReactNode } from "react";
 import AppIcon from "@/components/AppIcon";
 import { copy } from "@/content/copy";
 import { artistField, artistPieces, featured, type Feature, type Piece } from "@/content/featured";
 import { contact } from "@/data/contact";
 import { projects } from "@/data/projects";
+import { logPortfolioInteraction } from "@/lib/posthogLogger";
 import PieceView from "./PieceView";
 
 const iconSize = "clamp(4.5rem, 6.4vw, 6rem)";
@@ -126,7 +130,15 @@ function Item({ href, morphId, field, icon, pieces, label, title, tagline, cta }
           {body}
         </Link>
       ) : (
-        <a href={href} data-field={field} className={className}>
+        <a
+          href={href}
+          data-field={field}
+          onClick={() => {
+            posthog.capture("contact_initiated");
+            logPortfolioInteraction("contact initiation selected", { surface: "featured" });
+          }}
+          className={className}
+        >
           {body}
         </a>
       )}

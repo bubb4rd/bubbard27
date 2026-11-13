@@ -1,9 +1,11 @@
 "use client";
 
 import { DotsThree, FileText } from "@phosphor-icons/react/dist/ssr";
+import posthog from "posthog-js";
 import { useEffect, useRef, type PointerEvent } from "react";
 import { copy } from "@/content/copy";
 import { contact } from "@/data/contact";
+import { logPortfolioInteraction } from "@/lib/posthogLogger";
 
 /** Brand marks (Simple Icons, CC0), white on each brand's colour, sized to sit in the squircle like the real app icons. */
 const logos: Record<string, { bg: string; scale: string; d: string }> = {
@@ -69,7 +71,16 @@ export default function Dock() {
             const logo = logos[label];
             return (
               <li key={label}>
-                <a href={href} target="_blank" rel="noopener noreferrer" className={tile}>
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    posthog.capture("outbound_profile_link_clicked", { destination: label });
+                    logPortfolioInteraction("outbound profile link selected", { destination: label });
+                  }}
+                  className={tile}
+                >
                   {logo && (
                     <span className={icon} style={{ backgroundColor: logo.bg }} aria-hidden>
                       <svg viewBox="0 0 24 24" fill="#fff" style={{ width: logo.scale, height: logo.scale }}>
@@ -83,7 +94,15 @@ export default function Dock() {
             );
           })}
           <li>
-            <a href="/cv.pdf" download={copy.dock.cvFile} className={tile}>
+            <a
+              href="/cv.pdf"
+              download={copy.dock.cvFile}
+              onClick={() => {
+                posthog.capture("cv_downloaded");
+                logPortfolioInteraction("cv download selected", { asset: "cv" });
+              }}
+              className={tile}
+            >
               <span className={icon} aria-hidden>
                 <FileText size={24} />
               </span>
