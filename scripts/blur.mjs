@@ -9,8 +9,10 @@ const root = path.resolve(import.meta.dirname, "..");
 const pub = path.join(root, "public");
 const out = path.join(root, "src/data/blur.json");
 
+// Sorted, so the file comes out the same whatever order the file system lists a folder in.
 async function* images(dir) {
-  for (const entry of await readdir(dir, { withFileTypes: true })) {
+  const entries = (await readdir(dir, { withFileTypes: true })).sort((a, b) => a.name.localeCompare(b.name));
+  for (const entry of entries) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) yield* images(full);
     else if (/\.(jpe?g|png|webp)$/i.test(entry.name)) yield full;
