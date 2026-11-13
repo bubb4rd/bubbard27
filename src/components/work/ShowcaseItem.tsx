@@ -32,6 +32,8 @@ type Props = {
   label: string;
   /** Pause clips while offstage. */
   held?: boolean;
+  /** Download a clip with the rest of its row as the row nears, even while held; off for a row's repeat. */
+  warm?: boolean;
   /** Clip play/pause control; off inside links. */
   controls?: boolean;
   priority?: boolean;
@@ -48,8 +50,8 @@ type Props = {
  * A bleeding piece sits near the row's top at nearly twice the size, and its
  * clip control rises to stay in view.
  */
-export default function ShowcaseItem({ media, device, label, held, controls, priority, morph, bleed }: Props) {
-  const frame = { label, held, controls, priority, blur: media.blur };
+export default function ShowcaseItem({ media, device, label, held, warm, controls, priority, morph, bleed }: Props) {
+  const frame = { label, held, warm, controls, priority, blur: media.blur };
   const named = morph ? { "data-morph": "" } : {};
   const placed = { "--morph": morph, marginTop: bleed ? `${BLEED_TOP}cqh` : undefined } as CSSProperties;
 

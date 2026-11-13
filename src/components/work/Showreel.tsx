@@ -20,7 +20,16 @@ export default function Showreel({ project, priority, controls = false }: { proj
   const label = `${project.title}, ${project.subtitle}`;
   const row = (copy: boolean) =>
     media.map((m, i) => (
-      <ShowcaseItem key={i} media={m} device={device} label={label} controls={controls} priority={!copy && priority && i < 2} bleed={bleed} />
+      <ShowcaseItem
+        key={i}
+        media={m}
+        device={device}
+        label={label}
+        controls={controls}
+        warm={!copy}
+        priority={!copy && priority && i < 2}
+        bleed={bleed}
+      />
     ));
 
   return (

@@ -1,0 +1,8 @@
+# Clips, posters and screenshots in /media are never overwritten in place: a changed file gets a new
+# name (see scripts/encode-clip.sh). So browsers and the CDN may keep them for a year without asking
+# again, which also spares a looping clip's repeat a second download. Netlify's image CDN carries the
+# header through to its resized versions of these files.
+[[headers]]
+  for = "/media/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

@@ -124,6 +124,7 @@ export default function Carousel({ children, repeat, fade = "both", held = false
     <div className={`h-full ${bleed ? "" : "fade-y"}`}>
       <div
         ref={scroller}
+        data-row
         data-at-start={fade === "both" || undefined}
         data-at-end={fade === "lead" || undefined}
         className={`pan-x flex h-full ${bleed ? "items-center-safe" : "items-center"} ${single ? "px-[calc(var(--pan-inset)/2)]" : "px-(--pan-inset)"} ${overflows ? "fade-x" : "justify-center-safe"}`}

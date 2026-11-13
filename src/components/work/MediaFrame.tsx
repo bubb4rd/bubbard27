@@ -1,11 +1,29 @@
 "use client";
 
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { copy } from "@/content/copy";
 import type { ProjectMedia } from "@/data/projects";
+import { aspectRatio } from "@/lib/aspect";
 import { useMediaQuery } from "@/lib/useMediaQuery";
 import { useSaveData } from "@/lib/useSaveData";
+
+/** AV1 in MP4; level 4.0 covers 1080p at 30 fps, so browsers without hardware for it pick the H.264 source. */
+const AV1 = 'video/mp4; codecs="av01.0.08M.08"';
+
+/**
+ * The image optimizer's URL for a clip's poster about `width` device pixels
+ * wide, so the still shown before a clip plays is a resized WebP or AVIF
+ * rather than the full-size JPEG.
+ */
+function posterUrl(src: string, width: number) {
+  const { srcSet = "" } = getImageProps({ src, alt: "", fill: true, sizes: `${width}px` }).props;
+  const candidates = srcSet.split(", ").map((c) => {
+    const [url, w] = c.split(" ");
+    return { url, w: parseInt(w) };
+  });
+  return (candidates.find((c) => c.w >= width) ?? candidates.at(-1))?.url ?? src;
+}
 
 type Props = {
   media: ProjectMedia;
@@ -23,6 +41,8 @@ type Props = {
   controlClassName?: string;
   /** Keeps a clip paused while it is offstage, e.g. on a hidden case-study stage layer. */
   held?: boolean;
+  /** Download the clip with the rest of its row as the row nears, even while held; off for a row's repeat. */
+  warm?: boolean;
   /** Tiny data URL shown blurred until the media has loaded (from data/blur.json). */
   blur?: string;
   /** Show the play/pause control on clips. Off inside links, where a button can't nest. */
@@ -32,8 +52,9 @@ type Props = {
 
 /**
  * One image or muted looping clip over a blurred placeholder; images fade in
- * once loaded. Clips download only when about to play, play only while on
- * screen, and start paused under reduced motion or data saver.
+ * once loaded. Clips download as their row comes within half a screen (a
+ * row's repeat only once it is on screen), play only while on screen, and
+ * start paused under reduced motion or data saver.
  */
 export default function MediaFrame({
   media,
@@ -45,6 +66,7 @@ export default function MediaFrame({
   position,
   controlClassName = "bottom-3 right-3",
   held = false,
+  warm = false,
   blur,
   controls = true,
   className = "",
@@ -73,6 +95,7 @@ export default function MediaFrame({
           objectStyle={objectStyle}
           controlClassName={controlClassName}
           held={held}
+          warm={warm}
           controls={controls}
         />
       ) : (
@@ -119,6 +142,7 @@ function Clip({
   objectStyle,
   controlClassName,
   held,
+  warm,
   controls,
 }: {
   media: ProjectMedia;
@@ -127,6 +151,7 @@ function Clip({
   objectStyle?: { objectPosition: string };
   controlClassName: string;
   held: boolean;
+  warm: boolean;
   controls: boolean;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
@@ -135,23 +160,27 @@ function Clip({
   // null follows the motion and data preferences; a press on the control overrides them.
   const [choice, setChoice] = useState<boolean | null>(null);
   const [playing, setPlaying] = useState(false);
-  const wantsPlay = !held && (choice ?? !(reduced || saveData));
+  const allowed = choice ?? !(reduced || saveData);
+  const wantsPlay = !held && allowed;
+  const wantsLoad = allowed && (warm || !held);
 
-  // preload="none" holds the download until a clip that will play is within a screen of view.
+  // preload="none" holds the download until the clip's row is within half a screen, so pieces further
+  // along the row are ready before they roll in. A repeat (not warm) waits until it is on screen itself,
+  // and by then plays from what its original already downloaded.
   useEffect(() => {
     const video = ref.current;
-    if (!video || !wantsPlay) return;
+    if (!video || !wantsLoad) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
         video.preload = "auto";
         observer.disconnect();
       },
-      { rootMargin: "100% 0px" },
+      { rootMargin: warm ? "50% 0px" : "0px" },
     );
-    observer.observe(video);
+    observer.observe(warm ? (video.closest("[data-row]") ?? video) : video);
     return () => observer.disconnect();
-  }, [wantsPlay]);
+  }, [wantsLoad, warm]);
 
   useEffect(() => {
     const video = ref.current;
@@ -188,7 +217,7 @@ function Clip({
     <>
       <video
         ref={ref}
-        poster={media.poster}
+        poster={media.poster && posterUrl(media.poster, aspectRatio(media.aspect) < 1 ? 720 : 1200)}
         aria-label={media.alt ?? label}
         muted
         loop
@@ -199,7 +228,8 @@ function Clip({
         className={`absolute inset-0 h-full w-full ${fitClass}`}
         style={objectStyle}
       >
-        {/* The first matching source wins; phones get the 720p rendition when there is one. */}
+        {/* The first matching source wins: AV1 where it plays, then phones get the 720p rendition when there is one. */}
+        {media.av1 && <source src={media.av1} type={AV1} />}
         {media.small && <source src={media.src} type="video/mp4" media="(min-width: 768px)" />}
         <source src={media.small ?? media.src} type="video/mp4" />
       </video>

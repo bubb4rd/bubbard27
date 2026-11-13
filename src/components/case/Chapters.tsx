@@ -35,17 +35,21 @@ export function ChapterScope({ children }: { children: ReactNode }) {
 /**
  * Sticky media stage: one layer per chapter, the active one in focus and the
  * rest blurred away. A chapter without media keeps the previous layer up.
- * The overview's pieces are named landing-<id>-<n>, so the mockups of an
- * opened landing feature land in them.
+ * Only the layers next to the reader are mounted, so a case study loads its
+ * media a chapter ahead instead of all at once; their clips download while
+ * still offstage, ready to play when their chapter arrives. The overview's
+ * pieces are named landing-<id>-<n>, so the mockups of an opened landing
+ * feature land in them.
  */
 export function Stage({ id, chapters, device, label }: { id: string; chapters: Chapter[]; device: Device; label: string }) {
-  let shown = use(ActiveChapter);
+  const active = use(ActiveChapter);
+  let shown = active;
   while (shown > 0 && chapters[shown].media.length === 0) shown--;
 
   return (
     <div className="sticky top-0 hidden h-dvh overflow-hidden lg:block">
       {chapters.map((c, i) =>
-        c.media.length ? (
+        c.media.length && (i === shown || Math.abs(i - active) <= 1) ? (
           <Layer
             key={i}
             media={c.media}
@@ -65,6 +69,7 @@ type LayerProps = { media: Showpiece[]; device: Device; active: boolean; label: 
 
 /** One chapter's media as a rolling row the reader can pan sideways. */
 function Layer({ media, device, active, label, priority, morph }: LayerProps) {
+  // The row's repeat never fetches ahead: it plays from what the first pass already downloaded.
   const row = (copy: boolean) =>
     media.map((m, i) => (
       <ShowcaseItem
@@ -73,6 +78,7 @@ function Layer({ media, device, active, label, priority, morph }: LayerProps) {
         device={device}
         label={label}
         held={!active}
+        warm={!copy}
         priority={!copy && priority}
         morph={copy || !morph ? undefined : `${morph}-${i}`}
       />
