@@ -1,26 +1,689 @@
 @import "tailwindcss";
 
+/*
+ * BUBBARD 27 design system.
+ *
+ * Colour, type, radius and easing live in @theme, so Tailwind generates the
+ * utilities components use (bg-wall, text-display, rounded-panel,
+ * ease-spring). Durations and layout measures live in :root and are used as
+ * duration-(--dur-base) or px-(--gutter). Components never hard-code any of
+ * these values.
+ *
+ * Shape rule: panels are rounded-panel, app icons are rounded-icon
+ * squircles, interactive pills are rounded-full, media sits in device frames
+ * (phone, screen) or rounded-card prints.
+ */
+@theme {
+  /* Near-white page, black ink, one vermilion accent. */
+  --color-wall: #f2f2ef;
+  --color-wall-raised: #f9f9f7;
+  --color-mat: #ffffff;
+  --color-ink: #121212;
+  --color-muted: #63635d;
+  --color-line: #e2e2dd;
+  /* 4.6:1 under white text, so filled pills pass AA. */
+  --color-vermilion: #d93a26;
+  /* Device bezels and the backdrop behind loading media. */
+  --color-device: #181818;
+  /* Status chips (Alpha): text and border, over a 10% fill; 4.6:1 on the wall. */
+  --color-ember: #c2410c;
+
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-display: var(--font-archivo), system-ui, sans-serif;
+  /* Project faces for featured titles on the landing hover. */
+  --font-elovate: var(--font-sora), system-ui, sans-serif;
+  --font-wkcc: var(--font-nunito), system-ui, sans-serif;
+  --font-vaultair: var(--font-space-grotesk), system-ui, sans-serif;
+
+  /* Type scale, smallest to largest. */
+  --text-micro: 0.6875rem;
+  --text-micro--line-height: 1.4;
+  --text-micro--letter-spacing: 0.14em;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.45;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.6;
+  --text-lead: 1.125rem;
+  --text-lead--line-height: 1.5;
+  --text-heading: 1.375rem;
+  --text-heading--line-height: 1.15;
+  --text-heading--letter-spacing: -0.015em;
+  /* Featured project titles on the landing hover. */
+  --text-feature: clamp(2rem, 1.4rem + 1.6vw, 2.75rem);
+  --text-feature--line-height: 1;
+  --text-title: clamp(1.75rem, 1.15rem + 1.6vw, 2.5rem);
+  --text-title--line-height: 1.05;
+  --text-title--letter-spacing: -0.025em;
+  --text-display: clamp(2.5rem, 1.2rem + 3.8vw, 4.75rem);
+  --text-display--line-height: 0.98;
+  --text-display--letter-spacing: -0.035em;
+
+  --radius-card: 0.875rem;
+  --radius-panel: 2rem;
+  --radius-icon: 22.5%;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Slight overshoot and settle, for things that pop into place. */
+  --ease-spring: linear(
+    0,
+    0.012 1.2%,
+    0.05 2.6%,
+    0.2 5.6%,
+    0.43 9.4%,
+    0.88 17.2%,
+    1.01 21%,
+    1.07 24.6%,
+    1.09 28%,
+    1.07 32.6%,
+    1.03 38.8%,
+    0.995 47.8%,
+    0.99 55%,
+    1 74%,
+    1
+  );
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Timing: fast for colour and focus, base for blurs and fades, spring for
+     pieces popping into place, slow for stage changes and page morphs. */
+  --dur-fast: 180ms;
+  --dur-base: 420ms;
+  --dur-spring: 720ms;
+  --dur-slow: 700ms;
+  /* Delay between items that animate as a group. */
+  --stagger: 45ms;
+  /* Media rows: padding at either end and the gap between pieces. */
+  --pan-inset: clamp(2rem, 5.5vw, 5rem);
+  --pan-gap: clamp(2.5rem, 5.5vw, 5rem);
+
+  /* Page edge padding, gap between panels, inner padding of panels. */
+  --gutter: clamp(1.25rem, 2.4vw, 2rem);
+  --rhythm: clamp(0.75rem, 1.4vw, 1.25rem);
+  --pad: clamp(1.5rem, 3.5vw, 3rem);
+
+  /* Shadows are tinted to the page, never pure black. On the landing page the
+     cursor is the room's one light: Backdrop writes --sx/--sy, the offset
+     away from it, and every shadow below leans with it. 0 everywhere else. */
+  --sx: 0px;
+  --sy: 0px;
+  --shadow-soft: calc(var(--sx) * 0.5) calc(10px + var(--sy) * 0.5) 24px -12px rgb(30 30 25 / 0.28);
+  --shadow-lifted: var(--sx) calc(28px + var(--sy)) 60px -20px rgb(30 30 25 / 0.42);
+  /* For drop-shadow() on shapes a box-shadow can't follow, like phone frames. */
+  --shadow-drop: var(--sx) calc(24px + var(--sy)) 30px rgb(30 30 25 / 0.3);
+
+  /* How much the page behind recedes while a featured piece is open. */
+  --recede-blur: 10px;
+  --recede-opacity: 0.35;
+
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Mono uppercase label: chapter index, facts, captions on media. */
+@utility caps {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  line-height: var(--text-micro--line-height);
+  letter-spacing: var(--text-micro--letter-spacing);
+  text-transform: uppercase;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Wide display cut of Archivo for the BUBBARD wordmark. */
+@utility wordmark {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-stretch: 125%;
+  letter-spacing: 0.04em;
+}
+
+/* Interactive pills: one shape for every button-like link on the site. */
+@utility pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  border-radius: 9999px;
+  padding: 0.6rem 1rem;
+  font-size: var(--text-caption);
+  font-weight: 500;
+  line-height: 1;
+  transition:
+    background-color var(--dur-fast) linear,
+    border-color var(--dur-fast) linear,
+    color var(--dur-fast) linear,
+    scale var(--dur-fast) var(--ease-out);
+  &:active {
+    scale: 0.97;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Ink pill that turns vermilion on hover. */
+@utility pill-solid {
+  background-color: var(--color-ink);
+  color: var(--color-mat);
+  &:hover {
+    background-color: var(--color-vermilion);
+    color: #fff;
+  }
+}
+
+/* Soft grey pill for labels and secondary actions. */
+@utility pill-soft {
+  background-color: rgb(18 18 18 / 0.06);
+  color: var(--color-ink);
+  &:hover {
+    background-color: rgb(18 18 18 / 0.1);
+  }
+}
+
+/* A horizontal media row the reader pans with a trackpad swipe, a tilting
+   wheel or shift+wheel. Vertical wheel still scrolls the page; reaching an
+   end never triggers the browser's back/forward swipe. */
+@utility pan-x {
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* A sheet the same colour as the page, drawn only by a hairline. Squircle
+   corners where the browser supports corner-shape. */
+@utility sheet {
+  border-radius: var(--radius-panel);
+  background-color: var(--color-wall);
+  box-shadow: inset 0 0 0 1px var(--color-line);
+  @supports (corner-shape: squircle) {
+    corner-shape: squircle;
+  }
+}
+
+/* Media rows: an eased fade on each side that still has more to pan to
+   (the row sets data-at-start / data-at-end), and soft top and bottom
+   edges so shadows never end in a hard line. */
+@property --fl {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --fr {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@utility fade-x {
+  --fade: clamp(64px, calc(16.667vw - 64px), 256px);
+  --fl: var(--fade);
+  --fr: var(--fade);
+  transition:
+    --fl var(--dur-base) var(--ease-out),
+    --fr var(--dur-base) var(--ease-out);
+  &[data-at-start] {
+    --fl: 0px;
+  }
+  &[data-at-end] {
+    --fr: 0px;
+  }
+  mask-image: linear-gradient(
+    to right,
+    rgb(0 0 0 / 0) calc(var(--fl) * 0),
+    rgb(0 0 0 / 0) calc(var(--fl) * 0.1667),
+    rgb(0 0 0 / 0.0003) calc(var(--fl) * 0.2083),
+    rgb(0 0 0 / 0.0096) calc(var(--fl) * 0.25),
+    rgb(0 0 0 / 0.032) calc(var(--fl) * 0.2917),
+    rgb(0 0 0 / 0.067) calc(var(--fl) * 0.3333),
+    rgb(0 0 0 / 0.1135) calc(var(--fl) * 0.375),
+    rgb(0 0 0 / 0.1703) calc(var(--fl) * 0.4167),
+    rgb(0 0 0 / 0.236) calc(var(--fl) * 0.4583),
+    rgb(0 0 0 / 0.3087) calc(var(--fl) * 0.5),
+    rgb(0 0 0 / 0.3865) calc(var(--fl) * 0.5417),
+    rgb(0 0 0 / 0.4673) calc(var(--fl) * 0.5833),
+    rgb(0 0 0 / 0.549) calc(var(--fl) * 0.625),
+    rgb(0 0 0 / 0.6294) calc(var(--fl) * 0.6667),
+    rgb(0 0 0 / 0.7064) calc(var(--fl) * 0.7083),
+    rgb(0 0 0 / 0.7778) calc(var(--fl) * 0.75),
+    rgb(0 0 0 / 0.8418) calc(var(--fl) * 0.7917),
+    rgb(0 0 0 / 0.8967) calc(var(--fl) * 0.8333),
+    rgb(0 0 0 / 0.941) calc(var(--fl) * 0.875),
+    rgb(0 0 0 / 0.9735) calc(var(--fl) * 0.9167),
+    rgb(0 0 0 / 0.9933) calc(var(--fl) * 0.9583),
+    rgb(0 0 0 / 1) calc(var(--fl) * 1),
+    rgb(0 0 0 / 1) calc(100% - var(--fr) * 1),
+    rgb(0 0 0 / 0.9933) calc(100% - var(--fr) * 0.9583),
+    rgb(0 0 0 / 0.9735) calc(100% - var(--fr) * 0.9167),
+    rgb(0 0 0 / 0.941) calc(100% - var(--fr) * 0.875),
+    rgb(0 0 0 / 0.8967) calc(100% - var(--fr) * 0.8333),
+    rgb(0 0 0 / 0.8418) calc(100% - var(--fr) * 0.7917),
+    rgb(0 0 0 / 0.7778) calc(100% - var(--fr) * 0.75),
+    rgb(0 0 0 / 0.7064) calc(100% - var(--fr) * 0.7083),
+    rgb(0 0 0 / 0.6294) calc(100% - var(--fr) * 0.6667),
+    rgb(0 0 0 / 0.549) calc(100% - var(--fr) * 0.625),
+    rgb(0 0 0 / 0.4673) calc(100% - var(--fr) * 0.5833),
+    rgb(0 0 0 / 0.3865) calc(100% - var(--fr) * 0.5417),
+    rgb(0 0 0 / 0.3087) calc(100% - var(--fr) * 0.5),
+    rgb(0 0 0 / 0.236) calc(100% - var(--fr) * 0.4583),
+    rgb(0 0 0 / 0.1703) calc(100% - var(--fr) * 0.4167),
+    rgb(0 0 0 / 0.1135) calc(100% - var(--fr) * 0.375),
+    rgb(0 0 0 / 0.067) calc(100% - var(--fr) * 0.3333),
+    rgb(0 0 0 / 0.032) calc(100% - var(--fr) * 0.2917),
+    rgb(0 0 0 / 0.0096) calc(100% - var(--fr) * 0.25),
+    rgb(0 0 0 / 0.0003) calc(100% - var(--fr) * 0.2083),
+    rgb(0 0 0 / 0) calc(100% - var(--fr) * 0.1667),
+    rgb(0 0 0 / 0) calc(100% - var(--fr) * 0)
+  );
+}
+@utility fade-y {
+  mask-image: linear-gradient(transparent, #000 48px, #000 calc(100% - 48px), transparent);
+}
+
+@layer base {
+  body {
+    background: var(--color-wall);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+  }
+
+  ::selection {
+    background: var(--color-vermilion);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-vermilion);
+    outline-offset: 3px;
+  }
+}
+
+/* ── App icon ─────────────────────────────────────────────────
+   In the components layer so a className utility can override the radius. */
+
+@layer components {
+  .app-icon {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-icon);
+    background: var(--color-mat);
+    box-shadow:
+      inset 0 0 0 1px rgb(0 0 0 / 0.06),
+      var(--shadow-soft);
+  }
+
+  /* Featured icons catch the light: Backdrop writes each one's own shadow
+     offset (--isx/--isy), where the lamp sits over it (--lx/--ly) and how
+     close it is (--lit). Screen blend, so the glare reads on dark icons and
+     vanishes on white ones. */
+  .feature-icon .app-icon {
+    box-shadow:
+      inset 0 0 0 1px rgb(0 0 0 / 0.06),
+      var(--isx, 0px) calc(10px + var(--isy, 0px)) 24px -12px rgb(30 30 25 / 0.28);
+  }
+  .feature-icon .app-icon::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at var(--lx, 50%) var(--ly, -30%), rgb(255 255 255 / 0.6), rgb(255 255 255 / 0) 75%);
+    mix-blend-mode: screen;
+    opacity: var(--lit, 0);
+    pointer-events: none;
+  }
+}
+
+/* ── Landing: featured pieces ──────────────────────────────────
+   Each feature is a link: an app icon, a label pill, a stage of pieces
+   that spring out from behind the icon, and a detail block below it.
+   --u is the choreography unit; piece positions and widths are in --u.
+   Mockups can tilt in 3D (--rx, --ry) and fade out at the bottom, so they
+   read as rising from behind the icon. */
+
+.feature {
+  --u: clamp(0.55rem, 0.68vw, 0.8rem);
+}
+
+.feature-icon {
+  transition:
+    transform var(--dur-spring) var(--ease-spring),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.feature-label {
+  transition:
+    opacity var(--dur-fast) linear,
+    transform var(--dur-base) var(--ease-out);
+}
+
+.feature-detail {
+  opacity: 0;
+  transform: translateY(-0.5rem);
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-spring) var(--ease-spring);
+  pointer-events: none;
+}
+
+.piece {
+  --rx: 0deg;
+  --ry: 0deg;
+  /* Same function list closed and open, so every step interpolates. */
+  --closed: translate(-50%, -50%) translate(calc(var(--x) * var(--u) * 0.2), 1.5rem) perspective(1400px) rotateY(0deg)
+    rotateX(0deg) rotate(0deg) scale(0.35);
+  --open: translate(-50%, -50%) translate(calc(var(--x) * var(--u)), calc(var(--y) * var(--u))) perspective(1400px)
+    rotateY(var(--ry)) rotateX(var(--rx)) rotate(var(--r)) scale(1);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: -1;
+  width: var(--w, auto);
+  opacity: 0;
+  transform: var(--closed);
+  transition:
+    transform var(--dur-spring) var(--ease-spring),
+    opacity var(--dur-base) var(--ease-out);
+  transition-delay: calc(var(--i) * var(--stagger));
+  pointer-events: none;
+}
+.piece[data-fade] {
+  mask-image: linear-gradient(to bottom, #000 45%, transparent 96%);
+}
+
+/* Open state: hover on fine pointers, keyboard focus everywhere. */
+@media (hover: hover) and (pointer: fine) {
+  body:has(.feature:hover) [data-recede]:not(:hover) {
+    filter: blur(var(--recede-blur));
+    opacity: var(--recede-opacity);
+  }
+  .feature:hover {
+    z-index: 10;
+  }
+  .feature:hover .feature-icon {
+    transform: translateY(-0.25rem) scale(0.92);
+  }
+  .feature:hover .feature-label {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  .feature:hover .feature-detail {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+  .feature:hover .piece {
+    opacity: 1;
+    transform: var(--open);
+  }
+}
+
+body:has(.feature:focus-visible) [data-recede]:not(:focus-within) {
+  filter: blur(var(--recede-blur));
+  opacity: var(--recede-opacity);
+}
+.feature:focus-visible {
+  z-index: 10;
+  outline: none;
+}
+.feature:focus-visible .feature-icon {
+  transform: translateY(-0.25rem) scale(0.92);
+  outline: 2px solid var(--color-vermilion);
+  outline-offset: 4px;
+}
+.feature:focus-visible .feature-label {
+  opacity: 0;
+}
+.feature:focus-visible .feature-detail {
+  opacity: 1;
+  transform: none;
+}
+.feature:focus-visible .piece {
+  opacity: 1;
+  transform: var(--open);
+}
+
+[data-recede] {
+  transition:
+    filter var(--dur-base) var(--ease-out),
+    opacity var(--dur-base) var(--ease-out);
+}
+
+/* ── Work: project index ───────────────────────────────────────
+   The entry you point at lifts its logo (a springy tilt over a deeper
+   shadow) and slides its title into ink; the other entries fall back. Hover
+   only where there is a pointer, so a tap doesn't leave an entry stuck lit;
+   keyboard focus gets the same treatment. */
+
+.index-entry {
+  color: var(--color-muted);
+  transition:
+    color var(--dur-fast) linear,
+    opacity var(--dur-base) var(--ease-out);
+}
+.index-entry .app-icon {
+  transition:
+    transform var(--dur-spring) var(--ease-spring),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+.index-entry-title {
+  transition: translate var(--dur-base) var(--ease-out);
+}
+
+.index-entry:focus-visible {
+  color: var(--color-ink);
+}
+.index-entry:focus-visible .app-icon {
+  transform: scale(1.15) rotate(-6deg);
+  box-shadow:
+    inset 0 0 0 1px rgb(0 0 0 / 0.06),
+    0 8px 14px -6px rgb(30 30 25 / 0.4);
+}
+.index-entry:focus-visible .index-entry-title {
+  translate: 0.25rem 0;
+}
+.project-index:has(.index-entry:focus-visible) .index-entry:not(:focus-visible) {
+  opacity: 0.45;
+}
+
+@media (hover: hover) {
+  .index-entry:hover {
+    color: var(--color-ink);
+  }
+  .index-entry:hover .app-icon {
+    transform: scale(1.15) rotate(-6deg);
+    box-shadow:
+      inset 0 0 0 1px rgb(0 0 0 / 0.06),
+      0 8px 14px -6px rgb(30 30 25 / 0.4);
+  }
+  .index-entry:hover .index-entry-title {
+    translate: 0.25rem 0;
+  }
+  .project-index:has(.index-entry:hover) .index-entry:not(:hover) {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .index-entry .app-icon,
+  .index-entry .index-entry-title {
+    transform: none !important;
+    translate: none !important;
+  }
+}
+
+/* ── Device frames ─────────────────────────────────────────── */
+
+/* A laptop/desktop screen: black bezel around rounded media, one soft shadow. */
+.screen {
+  border-radius: calc(var(--radius-card) + 0.4rem);
+  border: 0.4rem solid var(--color-device);
+  background: var(--color-device);
+  box-shadow: var(--sx) calc(30px + var(--sy)) 60px -30px rgb(30 30 25 / 0.35);
+}
+
+/* ── Dock ───────────────────────────────────────────────────────
+   Native popover, so it light-dismisses and closes on Escape without JS. */
+
+.dock[popover] {
+  inset: auto;
+  position: fixed;
+  left: 50%;
+  bottom: var(--gutter);
+  margin: 0;
+  opacity: 0;
+  translate: -50% 10px;
+  scale: 0.9;
+  transform-origin: bottom center;
+  transition:
+    opacity var(--dur-fast) linear,
+    translate var(--dur-spring) var(--ease-spring),
+    scale var(--dur-spring) var(--ease-spring),
+    overlay var(--dur-base) allow-discrete,
+    display var(--dur-base) allow-discrete;
+}
+.dock[popover]:popover-open {
+  opacity: 1;
+  translate: -50% 0;
+  scale: 1;
+}
+@starting-style {
+  .dock[popover]:popover-open {
+    opacity: 0;
+    translate: -50% 10px;
+    scale: 0.9;
+  }
+}
+
+/* ── Case-study stage ────────────────────────────────────────
+   One layer per chapter; the active one is sharp, the rest blur away. */
+
+.stage-layer {
+  opacity: 0;
+  filter: blur(24px);
+  transform: scale(0.97);
+  transition:
+    opacity var(--dur-slow) var(--ease-out),
+    filter var(--dur-slow) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out);
+  pointer-events: none;
+}
+.stage-layer[data-active] {
+  opacity: 1;
+  filter: none;
+  transform: none;
+  pointer-events: auto;
+}
+
+/* ── Page enter ──────────────────────────────────────────────── */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+    filter: blur(6px);
+  }
+}
+.rise {
+  animation: rise var(--dur-slow) var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * var(--stagger) * 2);
+}
+
+/* ── View transitions ───────────────────────────────────────────
+   Forward slides left, back slides right; an app icon morphs between pages. */
+
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-group(.morph) {
+  animation-duration: var(--dur-slow);
+  animation-timing-function: var(--ease-out);
+}
+::view-transition-image-pair(.morph) {
+  animation-name: via-blur;
+}
+@keyframes via-blur {
+  30% {
+    filter: blur(3px);
+  }
+}
+
+/* Landing to case: opening a featured project tags its navigation
+   from-landing. For that transition only, its open mockups and the case
+   stage's overview pieces share names (landing-<id>-<n>, set as --morph), so
+   each mockup flies from its tilted pose into the slot it becomes. Mockups
+   without a slot fade where they stand; other navigations keep their slide. */
+html:active-view-transition-type(from-landing) {
+  & .feature:is(:hover, :focus-visible) .piece[data-morph],
+  & .stage-layer[data-active] [data-morph] {
+    view-transition-name: var(--morph);
+    view-transition-class: piece-morph;
+  }
+}
+::view-transition-group(.piece-morph) {
+  animation-duration: var(--dur-slow);
+  animation-timing-function: var(--ease-out);
+}
+::view-transition-image-pair(.piece-morph) {
+  animation-name: via-blur;
+}
+::view-transition-old(.piece-morph),
+::view-transition-new(.piece-morph) {
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+::view-transition-old(.nav-forward) {
+  --slide: -48px;
+  animation:
+    var(--dur-fast) ease-in both fade reverse,
+    var(--dur-base) var(--ease-out) both slide reverse;
+}
+::view-transition-new(.nav-forward) {
+  --slide: 48px;
+  animation:
+    var(--dur-base) ease-out var(--dur-fast) both fade,
+    var(--dur-base) var(--ease-out) both slide;
+}
+::view-transition-old(.nav-back) {
+  --slide: 48px;
+  animation:
+    var(--dur-fast) ease-in both fade reverse,
+    var(--dur-base) var(--ease-out) both slide reverse;
+}
+::view-transition-new(.nav-back) {
+  --slide: -48px;
+  animation:
+    var(--dur-base) ease-out var(--dur-fast) both fade,
+    var(--dur-base) var(--ease-out) both slide;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes slide {
+  from {
+    translate: var(--slide);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-base: 0ms;
+    --dur-spring: 0ms;
+    --dur-slow: 0ms;
+    --stagger: 0ms;
+  }
+
+  .rise {
+    animation: none;
+  }
+
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
 }
