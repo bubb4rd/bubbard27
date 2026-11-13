@@ -46,4 +46,4 @@ Each featured title is set in its project's own face (`font-elovate` Sora, `font
 
 Each feature also names its dot field (`field` in `featured.ts`: `ripple`, `climb`, `scramble` or `marquee`). The fields are drawn in the shader in `src/components/landing/Backdrop.tsx`, one function each, in the project's brand colour; `presence` near the top of the shader sets how strongly all of them show (0 off, 1 full).
 
-Encode motion work with `scripts/encode-clip.sh`.
+Encode motion work with `scripts/encode-clip.sh`: it writes an H.264 clip capped at 30 fps (`--max 720` for heavy footage), an AV1 version when that comes out smaller, a phone rendition and a poster; list them as `src`, `av1`, `small` and `poster`. `/media` is cached for a year (`netlify.toml`), so never overwrite a published file: give a changed clip or image a new name.

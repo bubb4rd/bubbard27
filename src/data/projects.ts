@@ -8,6 +8,8 @@ export type ProjectMedia = {
   src: string;
   /** Video only: 720p rendition served below the md breakpoint (768px). */
   small?: string;
+  /** Video only: AV1 rendition at the main size, offered first to browsers that can play it (scripts/encode-clip.sh). */
+  av1?: string;
   /** Intrinsic aspect ratio as CSS `aspect-ratio`, e.g. "16/9" or "4/5". */
   aspect: string;
   /** Still frame shown until a clip plays, and instead of it under reduced motion or data saver. */
@@ -76,7 +78,7 @@ export const projects: Project[] = [
     kind: "Game Development",
     icon: "/images/chiron-logo.png",
     media: [
-      { type: "video", src: "/media/chiron/switch-track.mp4", small: "/media/chiron/switch-track-720.mp4", aspect: "1920/1080", poster: "/media/chiron/switch-track.jpg", caption: "Switch Track drill" },
+      { type: "video", src: "/media/chiron/switch-track-720p.mp4", av1: "/media/chiron/switch-track-720p-av1.mp4", aspect: "1280/720", poster: "/media/chiron/switch-track-720p.jpg", caption: "Switch Track drill" },
     ],
   },
   {
