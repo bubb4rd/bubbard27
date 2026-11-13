@@ -11,13 +11,18 @@ import { projects } from "@/data/projects";
 
 const step = (i: number) => ({ "--i": i }) as CSSProperties;
 
-/** One screen: the BUBBARD lockup, three featured projects and the artist, a line of bio, the way to everything else. */
+/**
+ * One screen: the BUBBARD lockup, three featured projects and the artist, a
+ * line of bio, the way to everything else. Spare height on a tall screen
+ * splits evenly above the lockup and above the nav, so the group sits
+ * mid-screen and the hover pieces keep clear of the top edge.
+ */
 export default function Home() {
   return (
     <PageTransition>
-      <main className="flex min-h-dvh flex-col items-center px-(--gutter)">
+      <main className="flex min-h-dvh flex-col items-center px-(--gutter) pt-[clamp(4rem,15svh,9rem)]">
         <Backdrop />
-        <h1 data-recede className="rise mt-[clamp(4rem,15svh,9rem)] flex items-center gap-3" style={step(0)}>
+        <h1 data-recede className="rise mt-auto flex items-center gap-3" style={step(0)}>
           <span className="app-icon block size-10">
             <Image src="/images/bubbard-logo.png" alt="" fill sizes="80px" priority className="object-cover" />
           </span>

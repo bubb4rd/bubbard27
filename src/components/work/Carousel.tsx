@@ -15,6 +15,8 @@ type Props = {
   fade?: "both" | "lead";
   /** Hold the roll, e.g. on a stage layer that's offstage. */
   held?: boolean;
+  /** A lone piece that runs off the bottom edge (see ShowcaseItem): no top or bottom fade, and it pins to the top once it's taller than the row. */
+  bleed?: boolean;
 };
 
 /**
@@ -30,7 +32,7 @@ type Props = {
  * cut. A single piece has nothing to pan to, so it gets half the insets and
  * shrinks to fit between them.
  */
-export default function Carousel({ children, repeat, fade = "both", held = false }: Props) {
+export default function Carousel({ children, repeat, fade = "both", held = false, bleed = false }: Props) {
   const scroller = useRef<HTMLDivElement>(null);
   const set = useRef<HTMLDivElement>(null);
   const single = Children.count(children) === 1;
@@ -119,12 +121,12 @@ export default function Carousel({ children, repeat, fade = "both", held = false
   }, [loops, held]);
 
   return (
-    <div className="fade-y h-full">
+    <div className={`h-full ${bleed ? "" : "fade-y"}`}>
       <div
         ref={scroller}
         data-at-start={fade === "both" || undefined}
         data-at-end={fade === "lead" || undefined}
-        className={`pan-x flex h-full items-center ${single ? "px-[calc(var(--pan-inset)/2)]" : "px-(--pan-inset)"} ${overflows ? "fade-x" : "justify-center-safe"}`}
+        className={`pan-x flex h-full ${bleed ? "items-center-safe" : "items-center"} ${single ? "px-[calc(var(--pan-inset)/2)]" : "px-(--pan-inset)"} ${overflows ? "fade-x" : "justify-center-safe"}`}
       >
         <div className="flex shrink-0 items-center gap-(--pan-gap)">
           <div

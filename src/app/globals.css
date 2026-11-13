@@ -202,7 +202,9 @@
 
 /* Media rows: an eased fade on each side that still has more to pan to
    (the row sets data-at-start / data-at-end), and soft top and bottom
-   edges so shadows never end in a hard line. */
+   edges so shadows never end in a hard line. The flat second layer keeps
+   15% of a piece showing even at the very edge, so the fade softens
+   rather than washes out. */
 @property --fl {
   syntax: "<length>";
   inherits: false;
@@ -214,7 +216,7 @@
   initial-value: 0px;
 }
 @utility fade-x {
-  --fade: clamp(64px, calc(16.667vw - 64px), 256px);
+  --fade: clamp(48px, calc(13vw - 48px), 200px);
   --fl: var(--fade);
   --fr: var(--fade);
   transition:
@@ -272,7 +274,8 @@
     rgb(0 0 0 / 0.0003) calc(100% - var(--fr) * 0.2083),
     rgb(0 0 0 / 0) calc(100% - var(--fr) * 0.1667),
     rgb(0 0 0 / 0) calc(100% - var(--fr) * 0)
-  );
+  ),
+  linear-gradient(rgb(0 0 0 / 0.15), rgb(0 0 0 / 0.15));
 }
 @utility fade-y {
   mask-image: linear-gradient(transparent, #000 48px, #000 calc(100% - 48px), transparent);

@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 
 /** Width / height of the framed phone (a 402 × 874 point iPhone). */
 export const PHONE_ASPECT = 402 / 874;
+/** Bezel on every side, as a share of the frame's width. */
+export const PHONE_BEZEL = 0.028;
 
 /**
  * A phone screenshot or screen recording in a plain dark iPhone shell: thin
@@ -12,8 +14,8 @@ export const PHONE_ASPECT = 402 / 874;
 export default function PhoneFrame({ children }: { children: ReactNode }) {
   return (
     <div
-      className="@container relative w-full overflow-hidden bg-device p-[2.8%] [border-radius:13.68%/6.29%]"
-      style={{ aspectRatio: PHONE_ASPECT }}
+      className="@container relative w-full overflow-hidden bg-device [border-radius:13.68%/6.29%]"
+      style={{ aspectRatio: PHONE_ASPECT, padding: `${PHONE_BEZEL * 100}%` }}
     >
       <div className="relative h-full w-full overflow-hidden rounded-[10.9cqw] bg-device">
         {children}
