@@ -1,5 +1,5 @@
 import type { Icon } from "@phosphor-icons/react";
-import { Cloud, GlobeHemisphereWest, SealCheck, Toolbox } from "@phosphor-icons/react/dist/ssr";
+import { Buildings, Cloud, GlobeHemisphereWest, SealCheck, Toolbox } from "@phosphor-icons/react/dist/ssr";
 
 /**
  * Every developer service I pay for, shown at spending.bohubbard.xyz. Edit
@@ -32,7 +32,7 @@ export type Group = { title: string; icon: Icon; services: Service[] };
 
 export const spending: { updated: string; groups: Group[] } = {
   /** ISO date of the last edit, shown in the header. */
-  updated: "2026-11-13",
+  updated: "2026-11-14",
   groups: [
     {
       title: "Infrastructure",
@@ -188,6 +188,21 @@ export const spending: { updated: string; groups: Group[] } = {
           cycle: "yearly",
           href: "https://elovatesr.com",
           mark: { image: "/images/elovate-logo.png" },
+        },
+      ],
+    },
+    {
+      title: "Business",
+      icon: Buildings,
+      services: [
+        {
+          id: "bubbard-organizational",
+          name: "BUBBARD",
+          use: "Organizational licenses",
+          price: 150,
+          cycle: "yearly",
+          href: "https://bohubbard.xyz",
+          mark: { image: "/images/bubbard-logo.png" },
         },
       ],
     },
