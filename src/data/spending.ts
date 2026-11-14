@@ -41,9 +41,11 @@ export const spending: { updated: string; groups: Group[] } = {
         {
           id: "supabase",
           name: "Supabase Pro",
-          use: "3 projects",
-          price: 25,
+          use: "Pro plan $25 + compute for 3 projects",
+          // $25 Pro plan plus about $28.71 of compute; compute varies month to month, so it reads as "about".
+          price: 53.71,
           cycle: "monthly",
+          approx: true,
           href: "https://supabase.com",
           mark: {
             bg: "#1c1c1c",
