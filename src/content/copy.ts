@@ -17,7 +17,7 @@ export const copy = {
     title: {
       roles: ["Developer", "Designer in"],
       city: "Chicago.",
-      rest: "I build desktop, web, and mobile, and the brands around them.",
+      rest: "I build applications and create solutions.",
     },
     recent: "Recent work",
     about: "About",
