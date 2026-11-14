@@ -673,6 +673,99 @@
   animation-delay: calc(var(--i, 0) * var(--stagger) * 2);
 }
 
+/* ── Landing: first-load cover ────────────────────────────────
+   The BUBBARD logo as a real cube: six white faces turned to the logo's
+   isometric view, the B on the right face, so at rest it is the logo. Its
+   tumble and the shading on each face are worked out and written as keyframes
+   by cube.ts (components/landing). While it is up, the page's rise waits
+   underneath. */
+
+@keyframes loader-out {
+  to {
+    opacity: 0;
+  }
+}
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  background: var(--color-ink);
+}
+.loader[data-done] {
+  pointer-events: none;
+  animation: loader-out var(--dur-base) var(--ease-out) forwards;
+}
+/* The cube's edge; the hexagon it makes at rest is √2 times as wide. The faces are square-cornered: the
+   filter (#loader-round, in Loader.tsx) rounds the corners of whatever outline the cube makes, as the logo's
+   are, and closes the hairline seams along its edges. */
+.loader-cube {
+  --edge: 2.25rem;
+  position: relative;
+  width: var(--edge);
+  aspect-ratio: 1;
+  perspective: 40rem;
+  filter: url(#loader-round);
+  transition: scale var(--dur-base) var(--ease-out);
+}
+/* At rest: the logo's isometric view (cube.ts animates from and back to it). */
+.loader-spin {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(-35.264deg) rotateY(-45deg);
+}
+.loader-face {
+  position: absolute;
+  inset: 0;
+  background: var(--color-mat);
+  backface-visibility: hidden;
+}
+/* Each face's ink veil, darkening as the face turns away (keyframes from cube.ts). */
+.loader-face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--color-ink);
+  opacity: 0;
+}
+.loader-face[data-face="front"] {
+  transform: translateZ(calc(var(--edge) / 2));
+}
+.loader-face[data-face="back"] {
+  transform: rotateY(180deg) translateZ(calc(var(--edge) / 2));
+}
+.loader-face[data-face="right"] {
+  transform: rotateY(90deg) translateZ(calc(var(--edge) / 2));
+}
+.loader-face[data-face="left"] {
+  transform: rotateY(-90deg) translateZ(calc(var(--edge) / 2));
+}
+.loader-face[data-face="top"] {
+  transform: rotateX(90deg) translateZ(calc(var(--edge) / 2));
+}
+.loader-face[data-face="bottom"] {
+  transform: rotateX(-90deg) translateZ(calc(var(--edge) / 2));
+}
+/* The B, unprojected off the logo (scripts/cube-face.mjs), cut in ink. Mask image set inline. */
+.loader-b {
+  position: absolute;
+  inset: 0;
+  background: var(--color-ink);
+  mask: center / 100% 100% no-repeat luminance;
+}
+.loader[data-done] .loader-cube {
+  scale: 0.8;
+}
+.loader[data-done] .loader-spin,
+.loader[data-done] .loader-face::after {
+  animation-play-state: paused;
+}
+html:has(.loader:not([data-done])) .rise {
+  animation-play-state: paused;
+}
+
 /* ── View transitions ───────────────────────────────────────────
    Forward slides left, back slides right; an app icon morphs between pages. */
 
