@@ -4,7 +4,6 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import AppIcon from "@/components/AppIcon";
 import ContactLinks from "@/components/landing/ContactLinks";
-import DitherField from "@/components/landing/DitherField";
 import FeatureTitle from "@/components/landing/FeatureTitle";
 import { Pieces } from "@/components/landing/PieceView";
 import PageTransition from "@/components/PageTransition";
@@ -36,7 +35,6 @@ const navLink = "transition-colors duration-(--dur-fast) hover:text-ink";
 export default function Home() {
   return (
     <PageTransition>
-      <DitherField />
       <div className="mx-auto grid max-w-[110rem] gap-x-[calc(var(--gutter)*2)] px-(--gutter) lg:grid-cols-[minmax(0,1fr)_clamp(21rem,30vw,28rem)] lg:grid-rows-[auto_auto_1fr]">
         {/* Once the columns stack: header, headline, portrait, then the work. On wide screens header and
             headline sit atop the work column, the portrait beside all three. */}
