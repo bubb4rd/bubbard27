@@ -83,7 +83,7 @@ export const projects: Project[] = [
   },
   {
     id: "elovatesr",
-    title: "Elovate SR",
+    title: "elovate",
     subtitle: "Warzone rank tracker",
     description:
       "Call of Duty ranked play companion with live leaderboards, cloud-synced progression, and so much more. Powered by OCR and stat extraction from your own Call of Duty matches.",
@@ -277,7 +277,7 @@ export const projects: Project[] = [
   },
   {
     id: "gliide",
-    title: "Gliide",
+    title: "gliide",
     subtitle: "Job search app",
     description:
       "Tailor your resume, honestly, with the AI agents you already use. Fit scoring, one-page resumes, a daily job feed, application tracking, and interview prep, all in one app for Mac. Built for students, early-career developers, and anyone finding their career.",

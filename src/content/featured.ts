@@ -73,7 +73,7 @@ export const features: Feature[] = [
   {
     id: "gliide",
     font: "gliide",
-    title: [{ text: "Gl" }, { text: "ii", color: "oklch(0.45 0.207 263.8)" }, { text: "de" }],
+    title: [{ text: "gl" }, { text: "ii", color: "oklch(0.45 0.207 263.8)" }, { text: "de" }],
     pieces: [
       { kind: "card", src: "/media/gliide/cover-letter-light.jpg", aspect: "2400/1500", w: 26, x: -9, y: -17, r: -4, tilt: [4, 14] },
       { kind: "card", src: "/media/gliide/tailor-fit-score.jpg", aspect: "1262/837", w: 26, x: 10, y: -21, r: 3, tilt: [4, -14] },
