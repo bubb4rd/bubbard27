@@ -1,4 +1,4 @@
-import { ArrowRight, MapPin } from "@phosphor-icons/react/dist/ssr";
+import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
@@ -198,12 +198,6 @@ export default function Home() {
 
             <div className="flex flex-col gap-2 px-3 pb-3 pt-5">
               <p className="font-display text-heading font-semibold">{profile.name}</p>
-              <p className="flex items-center gap-1.5 text-caption text-muted">
-                <MapPin size={12} weight="bold" aria-hidden />
-                {copy.landing.location}
-                <span aria-hidden>·</span>
-                {copy.landing.roles}
-              </p>
               <p className="text-body text-muted">
                 {copy.landing.grad}
                 <span className="flex items-center gap-[0.3em]">
