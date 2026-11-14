@@ -296,7 +296,7 @@ export const projects: Project[] = [
     year: "2026",
     role: "Solo: product, design and engineering",
     media: [
-      { type: "video", src: "/media/gliide/onboarding-walkthrough.mp4", small: "/media/gliide/onboarding-walkthrough-720.mp4", aspect: "1280/800", poster: "/media/gliide/onboarding-walkthrough.jpg", caption: "Resume in, first fit score out" },
+      { type: "video", src: "/media/gliide/own-plan.mp4", small: "/media/gliide/own-plan-720.mp4", aspect: "1920/1080", poster: "/media/gliide/own-plan.jpg", caption: "Your agent, nothing invented" },
     ],
     sections: [
       {
