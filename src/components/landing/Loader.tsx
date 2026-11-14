@@ -67,15 +67,6 @@ export default function Loader() {
     >
       {/* Server and browser may round the last digit of a sine differently. */}
       <style suppressHydrationWarning>{cubeCss}</style>
-      {/* Rounds the corners of the cube's outline, whatever it turns to: blur, then cut the alpha back to a
-          hard edge (the corners come back round), then lay the sharp cube over that, inside it. */}
-      <svg className="absolute size-0">
-        <filter id="loader-round" x="-60%" y="-60%" width="220%" height="220%" colorInterpolationFilters="sRGB">
-          <feGaussianBlur stdDeviation="2.6" result="blur" />
-          <feColorMatrix in="blur" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 18 -8" result="round" />
-          <feComposite in="SourceGraphic" in2="round" operator="atop" />
-        </filter>
-      </svg>
       <span className="loader-cube">
         <span
           className="loader-spin"
@@ -88,6 +79,16 @@ export default function Loader() {
               {side === "right" && <span className="loader-b" style={{ maskImage: `url(${face})` }} />}
             </span>
           ))}
+        </span>
+        {/* The same cube again, all white, blurred and cut back to a hard edge: its outline with the corners
+            rounded, as the logo's are. Darkened over the cube above, it trims that cube's square corners away,
+            whatever it turns to. */}
+        <span className="loader-trim">
+          <span className="loader-spin">
+            {sides.map((side) => (
+              <span key={side} className="loader-face" data-face={side} />
+            ))}
+          </span>
         </span>
       </span>
       {/* Nothing would ever lift the cover without JavaScript. */}

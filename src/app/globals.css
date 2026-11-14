@@ -697,17 +697,46 @@
   pointer-events: none;
   animation: loader-out var(--dur-base) var(--ease-out) forwards;
 }
-/* The cube's edge; the hexagon it makes at rest is √2 times as wide. The faces are square-cornered: the
-   filter (#loader-round, in Loader.tsx) rounds the corners of whatever outline the cube makes, as the logo's
-   are, and closes the hairline seams along its edges. */
+/* The cube's edge; the hexagon it makes at rest is √2 times as wide. The faces are square-cornered:
+   .loader-trim rounds the corners of whatever outline the cube makes, as the logo's are. Lighten lays the
+   result on the cover, so the trim's black reads as ink. */
 .loader-cube {
   --edge: 2.25rem;
   position: relative;
   width: var(--edge);
   aspect-ratio: 1;
   perspective: 40rem;
-  filter: url(#loader-round);
+  mix-blend-mode: lighten;
   transition: scale var(--dur-base) var(--ease-out);
+}
+/* A white copy of the cube on black. Blurred, then contrast cuts it back to a hard edge at half grey:
+   straight edges land where they were, corners come back round. Darken keeps the cube beneath inside that
+   outline and black outside it. A full edge of room on every side keeps the blur off the box's own edge.
+   Shaped for WebKit (iOS), which drops SVG url() filters over 3D-transformed content and runs CSS filter
+   chains unclamped, so nothing may follow the contrast. Its blur also goes coarse past a few pixels of
+   radius, and contrast shows every step: so the copy is built four times over and scaled down, and the
+   blur (10.4px there, 2.6px here) runs as eight small passes, σ = √8 × 3.68. */
+.loader-trim {
+  --trim-edge: calc(var(--edge) * 4);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--trim-edge) * 3);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  scale: 0.25;
+  perspective: 160rem;
+  background: #000;
+  filter: blur(3.68px) blur(3.68px) blur(3.68px) blur(3.68px) blur(3.68px) blur(3.68px) blur(3.68px)
+    blur(3.68px) contrast(18);
+  mix-blend-mode: darken;
+}
+.loader-trim .loader-spin {
+  --edge: var(--trim-edge);
+  inset: var(--trim-edge);
+}
+.loader-trim .loader-face::after {
+  content: none;
 }
 /* At rest: the logo's isometric view (cube.ts animates from and back to it). */
 .loader-spin {
