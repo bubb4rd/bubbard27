@@ -24,6 +24,8 @@ export const copy = {
     /** The opening paragraph of the About section on the 2024 and 2026 sites. */
     aboutBody:
       "I am a Computer Science graduate based in Chicago, IL. I like to combine technical development with my eye for design, aiming to create products and software that are intuitive and engaging.",
+    /** Read in place of the name-to-brand clip under About. */
+    brandClip: "Bo Hubbard: the O and H squeeze out, B slams into UBBARD, and the BUBBARD cube logo turns in beside it.",
     location: "Chicago, IL",
     roles: "Developer, Engineer",
     hello: "Say hello",

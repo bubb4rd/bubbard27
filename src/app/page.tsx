@@ -7,10 +7,11 @@ import ContactLinks from "@/components/landing/ContactLinks";
 import FeatureTitle from "@/components/landing/FeatureTitle";
 import { Pieces } from "@/components/landing/PieceView";
 import PageTransition from "@/components/PageTransition";
+import MediaFrame from "@/components/work/MediaFrame";
 import { copy } from "@/content/copy";
 import { features } from "@/content/featured";
 import { profile } from "@/data/profile";
-import { projects } from "@/data/projects";
+import { type ProjectMedia, projects } from "@/data/projects";
 import { blurFor } from "@/lib/blur";
 
 /** The projects in the recent column, newest first, each with its wide cover and its hover choreography. */
@@ -23,6 +24,18 @@ const recent = [
   const project = projects.find((p) => p.id === id);
   return project ? [{ project, cover, feature: features.find((f) => f.id === id) }] : [];
 });
+
+/**
+ * Where the name comes from: BO HUBBARD squeezed into BUBBARD (videos/bubbard-name-slam), cropped to the band
+ * around the lockup. Its poster is the last frame, the finished lockup.
+ */
+const brandClip: ProjectMedia = {
+  type: "video",
+  src: "/media/bubbard/name-slam.mp4",
+  av1: "/media/bubbard/name-slam-av1.mp4",
+  aspect: "1920/720",
+  poster: "/media/bubbard/name-slam.jpg",
+};
 
 const step = (i: number) => ({ "--i": i }) as CSSProperties;
 const navLink = "transition-colors duration-(--dur-fast) hover:text-ink";
@@ -146,6 +159,9 @@ export default function Home() {
               {copy.landing.about}
             </h2>
             <p className="mt-6 max-w-[58ch] text-lead text-pretty">{copy.landing.aboutBody}</p>
+            <div className="mt-8 overflow-hidden rounded-card">
+              <MediaFrame media={brandClip} label={copy.landing.brandClip} sizes="(min-width: 1024px) 60vw, 100vw" blur={blurFor(brandClip)} />
+            </div>
           </section>
 
           <footer className="mt-auto flex items-center justify-between gap-4 pt-[clamp(4rem,12svh,7rem)]">
