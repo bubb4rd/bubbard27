@@ -55,9 +55,10 @@ export default function Home() {
           </nav>
         </header>
 
+        {/* On phones the type scales with the column: "Developer+Designer" (about 9.1em, unbreakable) runs to just short of the padding. */}
         <h1
           data-dither-clear
-          className="rise order-first mt-[clamp(4rem,14svh,8rem)] mb-[clamp(1.5rem,5svh,2.5rem)] max-w-[24ch] font-display text-title font-semibold text-balance lg:order-none lg:col-start-1 lg:row-start-2 lg:mb-0"
+          className="rise order-first mt-[clamp(4rem,14svh,8rem)] mb-[clamp(1.5rem,5svh,2.5rem)] max-w-[24ch] font-display text-title font-semibold text-balance max-sm:text-[calc((100vw-var(--gutter)*2)/9.4)] lg:order-none lg:col-start-1 lg:row-start-2 lg:mb-0"
           style={step(1)}
         >
           {copy.landing.title.roles[0]}
