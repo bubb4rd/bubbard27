@@ -35,6 +35,7 @@
   --font-elovate: var(--font-sora), system-ui, sans-serif;
   --font-wkcc: var(--font-nunito), system-ui, sans-serif;
   --font-vaultair: var(--font-space-grotesk), system-ui, sans-serif;
+  --font-gliide: var(--font-source-serif), Georgia, serif;
 
   /* Type scale, smallest to largest. */
   --text-micro: 0.6875rem;
@@ -49,9 +50,6 @@
   --text-heading: 1.375rem;
   --text-heading--line-height: 1.15;
   --text-heading--letter-spacing: -0.015em;
-  /* Featured project titles on the landing hover. */
-  --text-feature: clamp(2rem, 1.4rem + 1.6vw, 2.75rem);
-  --text-feature--line-height: 1;
   --text-title: clamp(1.75rem, 1.15rem + 1.6vw, 2.5rem);
   --text-title--line-height: 1.05;
   --text-title--letter-spacing: -0.025em;
@@ -82,10 +80,6 @@
     1 74%,
     1
   );
-  /* The spring played backwards: a slight swell, then a quick drop, for things that pop back out of view. */
-  --ease-spring-back: cubic-bezier(0.4, -0.45, 0.75, 0);
-  /* Holds, then falls away: fades that should finish with the motion, not before it. */
-  --ease-hold: cubic-bezier(0.64, 0, 0.78, 0);
 }
 
 :root {
@@ -106,19 +100,14 @@
   --rhythm: clamp(0.75rem, 1.4vw, 1.25rem);
   --pad: clamp(1.5rem, 3.5vw, 3rem);
 
-  /* Shadows are tinted to the page, never pure black. On the landing page the
-     cursor is the room's one light: Backdrop writes --sx/--sy, the offset
-     away from it, and every shadow below leans with it. 0 everywhere else. */
-  --sx: 0px;
-  --sy: 0px;
-  --shadow-soft: calc(var(--sx) * 0.5) calc(10px + var(--sy) * 0.5) 24px -12px rgb(30 30 25 / 0.28);
-  --shadow-lifted: var(--sx) calc(28px + var(--sy)) 60px -20px rgb(30 30 25 / 0.42);
+  /* Shadows are tinted to the page, never pure black. */
+  --shadow-soft: 0 10px 24px -12px rgb(30 30 25 / 0.28);
+  --shadow-lifted: 0 28px 60px -20px rgb(30 30 25 / 0.42);
   /* For drop-shadow() on shapes a box-shadow can't follow, like phone frames. */
-  --shadow-drop: var(--sx) calc(24px + var(--sy)) 30px rgb(30 30 25 / 0.3);
+  --shadow-drop: 0 24px 30px rgb(30 30 25 / 0.3);
 
-  /* How much the page behind recedes while a featured piece is open. */
+  /* How far a landing card's cover blurs back while its hover is open. */
   --recede-blur: 10px;
-  --recede-opacity: 0.35;
 
   color-scheme: light;
 }
@@ -187,6 +176,18 @@
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* The vertical twin of pan-x, for a list that scrolls inside the page: no
+   scrollbar, and reaching its end never hands the scroll to the page. */
+@utility pan-y {
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
@@ -285,6 +286,33 @@
   mask-image: linear-gradient(transparent, #000 48px, #000 calc(100% - 48px), transparent);
 }
 
+/* A pan-y list: a short fade at each end that still has more to scroll to
+   (the list sets data-at-start / data-at-end). */
+@property --ft {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --fb {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@utility fade-list {
+  --ft: 1.5rem;
+  --fb: 1.5rem;
+  transition:
+    --ft var(--dur-base) var(--ease-out),
+    --fb var(--dur-base) var(--ease-out);
+  &[data-at-start] {
+    --ft: 0px;
+  }
+  &[data-at-end] {
+    --fb: 0px;
+  }
+  mask-image: linear-gradient(transparent, #000 var(--ft), #000 calc(100% - var(--fb)), transparent);
+}
+
 @layer base {
   body {
     background: var(--color-wall);
@@ -316,59 +344,13 @@
       inset 0 0 0 1px rgb(0 0 0 / 0.06),
       var(--shadow-soft);
   }
-
-  /* Featured icons catch the light: Backdrop writes each one's own shadow
-     offset (--isx/--isy), where the lamp sits over it (--lx/--ly) and how
-     close it is (--lit). Screen blend, so the glare reads on dark icons and
-     vanishes on white ones. */
-  .feature-icon .app-icon {
-    box-shadow:
-      inset 0 0 0 1px rgb(0 0 0 / 0.06),
-      var(--isx, 0px) calc(10px + var(--isy, 0px)) 24px -12px rgb(30 30 25 / 0.28);
-  }
-  .feature-icon .app-icon::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: radial-gradient(circle at var(--lx, 50%) var(--ly, -30%), rgb(255 255 255 / 0.6), rgb(255 255 255 / 0) 75%);
-    mix-blend-mode: screen;
-    opacity: var(--lit, 0);
-    pointer-events: none;
-  }
 }
 
-/* ── Landing: featured pieces ──────────────────────────────────
-   Each feature is a link: an app icon, a label pill, a stage of pieces
-   that spring out from behind the icon, and a detail block below it.
-   --u is the choreography unit; piece positions and widths are in --u.
-   Mockups can tilt in 3D (--rx, --ry) and fade out at the bottom, so they
-   read as rising from behind the icon. */
-
-.feature {
-  --u: clamp(0.55rem, 0.68vw, 0.8rem);
-}
-
-.feature-icon {
-  transition:
-    transform var(--dur-spring) var(--ease-spring),
-    box-shadow var(--dur-base) var(--ease-out);
-}
-
-.feature-label {
-  transition:
-    opacity var(--dur-fast) linear,
-    transform var(--dur-base) var(--ease-out);
-}
-
-.feature-detail {
-  opacity: 0;
-  transform: translateY(-0.5rem);
-  transition:
-    opacity var(--dur-base) var(--ease-out),
-    transform var(--dur-spring) var(--ease-spring);
-  pointer-events: none;
-}
+/* ── Landing: hover pieces ────────────────────────────────────
+   A card with a hover choreography (.feature) holds a stage of pieces that
+   spring up out of its cover. --u is the choreography unit; piece positions
+   and widths are in --u. Mockups can tilt in 3D (--rx, --ry) and fade out at
+   the bottom, so they read as rising out of the cover. */
 
 .piece {
   --rx: 0deg;
@@ -397,24 +379,8 @@
 
 /* Open state: hover on fine pointers, keyboard focus everywhere. */
 @media (hover: hover) and (pointer: fine) {
-  body:has(.feature:hover) [data-recede]:not(:hover) {
-    filter: blur(var(--recede-blur));
-    opacity: var(--recede-opacity);
-  }
   .feature:hover {
     z-index: 10;
-  }
-  .feature:hover .feature-icon {
-    transform: translateY(-0.25rem) scale(0.92);
-  }
-  .feature:hover .feature-label {
-    opacity: 0;
-    transform: translateY(0.5rem);
-  }
-  .feature:hover .feature-detail {
-    opacity: 1;
-    transform: none;
-    pointer-events: auto;
   }
   .feature:hover .piece {
     opacity: 1;
@@ -422,35 +388,13 @@
   }
 }
 
-body:has(.feature:focus-visible) [data-recede]:not(:focus-within) {
-  filter: blur(var(--recede-blur));
-  opacity: var(--recede-opacity);
-}
 .feature:focus-visible {
   z-index: 10;
   outline: none;
 }
-.feature:focus-visible .feature-icon {
-  transform: translateY(-0.25rem) scale(0.92);
-  outline: 2px solid var(--color-vermilion);
-  outline-offset: 4px;
-}
-.feature:focus-visible .feature-label {
-  opacity: 0;
-}
-.feature:focus-visible .feature-detail {
-  opacity: 1;
-  transform: none;
-}
 .feature:focus-visible .piece {
   opacity: 1;
   transform: var(--open);
-}
-
-[data-recede] {
-  transition:
-    filter var(--dur-base) var(--ease-out),
-    opacity var(--dur-base) var(--ease-out);
 }
 
 /* ── Work: project index ───────────────────────────────────────
@@ -516,6 +460,114 @@ body:has(.feature:focus-visible) [data-recede]:not(:focus-within) {
   }
 }
 
+/* ── Landing: recent work ─────────────────────────────────────
+   Same language as the project index: the card you point at eases its
+   cover in and slides its title; the others fall back. A card with a hover
+   choreography (.feature) goes further: its cover blurs back while the
+   pieces spring up out of it, and its name crossfades into the project's
+   own face. */
+
+.recent-card {
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.recent-cover {
+  transition:
+    scale var(--dur-slow) var(--ease-out),
+    filter var(--dur-base) var(--ease-out),
+    opacity var(--dur-base) var(--ease-out);
+}
+.recent-name {
+  transition: opacity var(--dur-fast) linear;
+}
+.recent-face {
+  opacity: 0;
+  translate: 0 0.35em;
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    translate var(--dur-spring) var(--ease-spring);
+}
+/* The choreography's unit, scaled to the cover (its container) so the pieces open around the card
+   rather than past the page's edge. */
+.recent-stage {
+  --u: 2.05cqi;
+}
+.recent-card .app-icon {
+  transition: transform var(--dur-spring) var(--ease-spring);
+}
+.recent-title {
+  transition: translate var(--dur-base) var(--ease-out);
+}
+
+.recent-card:focus-visible {
+  outline: none;
+}
+.recent-card:focus-visible .sheet {
+  outline: 2px solid var(--color-vermilion);
+  outline-offset: 3px;
+}
+.recent-grid:has(.recent-card:focus-visible) .recent-card:not(:focus-visible) {
+  opacity: 0.45;
+}
+
+@media (hover: hover) {
+  .recent-card:hover .recent-cover {
+    scale: 1.03;
+  }
+  .recent-card:hover .app-icon {
+    transform: scale(1.12) rotate(-6deg);
+  }
+  .recent-card:hover .recent-title {
+    translate: 0.25rem 0;
+  }
+  .recent-grid:has(.recent-card:hover) .recent-card:not(:hover) {
+    opacity: 0.45;
+  }
+}
+
+/* Open state: hover on fine pointers, and keyboard focus everywhere. */
+@media (hover: hover) and (pointer: fine) {
+  .recent-card.feature:hover .recent-cover {
+    filter: blur(var(--recede-blur));
+    opacity: 0.5;
+  }
+  .recent-card.feature:hover .recent-name {
+    opacity: 0;
+  }
+  .recent-card.feature:hover .recent-face {
+    opacity: 1;
+    translate: none;
+  }
+}
+.recent-card.feature:focus-visible .recent-cover {
+  filter: blur(var(--recede-blur));
+  opacity: 0.5;
+}
+.recent-card.feature:focus-visible .recent-name {
+  opacity: 0;
+}
+.recent-card.feature:focus-visible .recent-face {
+  opacity: 1;
+  translate: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recent-cover,
+  .recent-card .app-icon,
+  .recent-title,
+  .recent-face {
+    scale: none !important;
+    transform: none !important;
+    translate: none !important;
+  }
+}
+
+/* Hero ribbon (DitherField): faint fringe, edge and core cells. Swap these three for another palette. */
+.dither-field {
+  --dither-halo: var(--color-line);
+  --dither-edge: var(--color-ink);
+  --dither-core: var(--color-vermilion);
+}
+
 /* ── Device frames ─────────────────────────────────────────── */
 
 /* A laptop/desktop screen: black bezel around rounded media, one soft shadow. */
@@ -523,50 +575,7 @@ body:has(.feature:focus-visible) [data-recede]:not(:focus-within) {
   border-radius: calc(var(--radius-card) + 0.4rem);
   border: 0.4rem solid var(--color-device);
   background: var(--color-device);
-  box-shadow: var(--sx) calc(30px + var(--sy)) 60px -30px rgb(30 30 25 / 0.35);
-}
-
-/* ── Dock ───────────────────────────────────────────────────────
-   Native popover, so it light-dismisses and closes on Escape without JS.
-   A transition runs with the timing of the state it heads into: opening
-   springs up into place; closing plays that spring back, swelling slightly
-   and then dropping into the pill as it fades. overlay and display keep it
-   in the top layer until the exit has finished. */
-
-.dock[popover] {
-  inset: auto;
-  position: fixed;
-  left: 50%;
-  bottom: var(--gutter);
-  margin: 0;
-  opacity: 0;
-  translate: -50% 10px;
-  scale: 0.9;
-  transform-origin: bottom center;
-  transition:
-    opacity var(--dur-base) var(--ease-hold),
-    translate var(--dur-base) var(--ease-spring-back),
-    scale var(--dur-base) var(--ease-spring-back),
-    overlay var(--dur-base) allow-discrete,
-    display var(--dur-base) allow-discrete;
-}
-.dock[popover]:popover-open {
-  opacity: 1;
-  translate: -50% 0;
-  scale: 1;
-  transition:
-    opacity var(--dur-fast) linear,
-    translate var(--dur-spring) var(--ease-spring),
-    scale var(--dur-spring) var(--ease-spring),
-    overlay var(--dur-base) allow-discrete,
-    display var(--dur-base) allow-discrete;
-}
-@starting-style {
-  .dock[popover]:popover-open {
-    opacity: 0;
-    translate: -50% 10px;
-    scale: 0.9;
-  }
+  box-shadow: 0 30px 60px -30px rgb(30 30 25 / 0.35);
 }
 
 /* ── Case-study stage ────────────────────────────────────────
@@ -684,7 +693,7 @@ body:has(.feature:focus-visible) [data-recede]:not(:focus-within) {
   }
 }
 
-/* Landing to case: opening a featured project tags its navigation
+/* Landing to case: opening a landing card with a hover tags its navigation
    from-landing. For that transition only, its open mockups and the case
    stage's overview pieces share names (landing-<id>-<n>, set as --morph), so
    each mockup flies from its tilted pose into the slot it becomes. Mockups

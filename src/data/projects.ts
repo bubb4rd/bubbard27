@@ -402,7 +402,7 @@ export const projects: Project[] = [
     id: "borgwithus",
     title: "Borgwithus",
     subtitle: "Cocktail generator",
-    description: "A drink name generator with its own BORG AI, accounts, a community name wall, and so much more. Now averaging around 100 users.",
+    description: "A drink name generator that started in my dorm room at Arizona State and grew into BORG AI, accounts, a community name wall, and so much more. Now averaging around 100 users.",
     tags: ["React", "CSS", "HTML", "Netlify"],
     href: "https://borgwithus.xyz",
     kind: "Web Development",
@@ -422,7 +422,15 @@ export const projects: Project[] = [
     sections: [
       {
         heading: "The spark",
-        body: "What started as a list of puns turned into a real app. You can make an account, like or dislike names, and submit up to three of your own a day to the public wall, with an admin approving each one before it goes up. Then I added BORG AI for the names nobody has thought of yet.",
+        body: "Borgs were everywhere when I was in college, especially on football game days. Naming them was the hard part, and I wanted one place to get a name that fit without thinking twice. So one Saturday in my dorm room, I spent the morning and afternoon before the game building the first version of Borgwithus, while drinking one, of course: a yellow Playborg Carti, still one of my favorite names in the catalog.",
+      },
+      {
+        heading: "Game day",
+        body: "Our first logo was just a gallon jug with “Borg with us” written over it. I printed a few copies with the domain on them and slapped them on message boards around Arizona State's campus, and people actually started using it. Our busiest month back then had over 500 users. Honestly, I didn't give it the attention it deserved for that many people, but it made me want to build it properly.",
+      },
+      {
+        heading: "The rewrite",
+        body: "Version two brought newer tech, a lot more names, and real accounts. You can like or dislike names and submit up to three of your own a day to the public wall, with an admin approving each one before it goes up. Then came BORG AI, for the names nobody has thought of yet.",
         media: [
           { type: "image", src: "/media/borgwithus/name-wall-screen.jpg", aspect: "2400/1500", caption: "Submitting names and the community wall" },
         ],
@@ -437,10 +445,22 @@ export const projects: Project[] = [
       },
       {
         heading: "The engine",
-        body: "The front end is React on Netlify, with Supabase handling accounts, the database, and edge functions. BORG AI runs an open-source model on Runpod that scales to zero when nobody's using it, and code double-checks every name, so it actually swaps a sound for “borg” and isn't a repeat. There's also an admin studio for rating names and exporting training data to fine-tune the model.",
+        body: "The front end is React on Netlify, with Supabase handling accounts, the database, and edge functions. Likes, the name wall, the top ten and every daily limit live in the database, and an admin dashboard and review queue keep it all in check.",
         media: [
+          { type: "image", src: "/media/borgwithus/top-ten-board.jpg", aspect: "1600/680", caption: "The top ten, ranked by likes" },
+        ],
+      },
+      {
+        heading: "BORG AI",
+        body: "BORG AI is my own take on the generator, for names nobody's heard yet. Members get five a day: give it a theme, or leave it blank for a random one. The model picks something famous to riff on, then code checks that the name really swaps a sound for “borg” (“Ron Borgundy”, not “Taylorborg”) and isn't a repeat, and makes the swap itself when the model misses. Behind it all is the AI Borg Studio, where I test prompt versions, rate every batch, and export the names members and I liked as training data to fine-tune the model.",
+        media: [
+          { type: "image", src: "/media/borgwithus/borg-ai-members-tab.jpg", aspect: "1583/1075", caption: "A BORG AI name in the jug builder" },
           { type: "image", src: "/media/borgwithus/borg-ai-beta-notice.jpg", aspect: "1200/750", caption: "BORG AI beta notice" },
         ],
+      },
+      {
+        heading: "The move to Runpod",
+        body: "The first version of BORG AI ran on edge functions connected to an open-source, uncensored Llama model on a Hetzner VPS. Performance was rough, and after a lot of back-and-forth tweaking and a few plan switches, I moved it to serverless GPUs on Runpod. There are trade-offs: it scales to zero when nobody's using it, so the first name after a quiet stretch waits on a cold start. But I'm not paying for a server that sits idle, and it's way faster once it's warm, so Runpod was the better fit for us.",
       },
       {
         heading: "The snags",

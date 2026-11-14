@@ -57,8 +57,10 @@ export default function ShowcaseItem({ media, device, label, held, warm, control
 
   if (device === "phone" || media.frame === "phone") {
     return (
+      // A box-shadow on the shell's own rounded shape, not filter: drop-shadow(): Safari clips a filter's
+      // shadow to the element's box inside the row's masked scroller, leaving hard lines and a grey rectangle.
       <div
-        className="shrink-0 drop-shadow-(--shadow-drop)"
+        className="shrink-0 shadow-(--shadow-drop) [border-radius:13.68%/6.29%]"
         style={{ ...placed, height: `${bleed ? BLEED_HEIGHT : 76}cqh`, aspectRatio: PHONE_ASPECT, "--lift": lift(PHONE_ASPECT, PHONE_BEZEL, "6cqw") } as CSSProperties}
         {...named}
       >

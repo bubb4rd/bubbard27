@@ -33,7 +33,7 @@ export default function Showreel({ project, priority, controls = false }: { proj
     ));
 
   return (
-    <Carousel repeat={row(true)} bleed={bleed}>
+    <Carousel repeat={row(true)} fade="lead" bleed={bleed}>
       {row(false)}
     </Carousel>
   );

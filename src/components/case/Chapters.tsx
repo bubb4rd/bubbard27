@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, use, useEffect, useState, type MouseEvent, type ReactNode } from "react";
+import { createContext, use, useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import Carousel from "@/components/work/Carousel";
 import ShowcaseItem, { type Showpiece } from "@/components/work/ShowcaseItem";
 import type { Device } from "@/lib/work";
@@ -95,12 +95,42 @@ function Layer({ media, device, active, label, priority, morph }: LayerProps) {
 /**
  * The chapter index pinned to the bottom of the text column. Its backdrop is
  * solid behind the list and fades only across the top padding (pt-20 = 5rem),
- * so text scrolling underneath never shows through, however many chapters.
+ * so text scrolling underneath never shows through. Past five chapters the
+ * list scrolls on its own (wheel or trackpad over it, or keyboard focus), a
+ * soft fade marks each end with more past it, and it glides to keep the
+ * chapter being read in its middle, as on gianlucreates.
  * A link glides up or down to its chapter and stops with it centred, where
  * the index and the stage count it as the one being read.
  */
 export function ChapterIndex({ headings }: { headings: string[] }) {
   const active = use(ActiveChapter);
+  const list = useRef<HTMLOListElement>(null);
+
+  useEffect(() => {
+    const el = list.current;
+    if (!el) return;
+    const edges = () => {
+      el.toggleAttribute("data-at-start", el.scrollTop <= 1);
+      el.toggleAttribute("data-at-end", el.scrollTop + el.clientHeight >= el.scrollHeight - 1);
+    };
+    edges();
+    el.addEventListener("scroll", edges, { passive: true });
+    // The index is display: none below lg, so its size (and whether it overflows) changes with the window.
+    const resize = new ResizeObserver(edges);
+    resize.observe(el);
+    return () => {
+      el.removeEventListener("scroll", edges);
+      resize.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    const el = list.current;
+    const item = el?.children[active] as HTMLElement | undefined;
+    if (!el || !item || el.scrollHeight <= el.clientHeight) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollTo({ top: item.offsetTop - (el.clientHeight - item.offsetHeight) / 2, behavior: reduced ? "instant" : "smooth" });
+  }, [active]);
 
   function go(e: MouseEvent<HTMLAnchorElement>) {
     const target = document.getElementById(e.currentTarget.hash.slice(1));
@@ -113,7 +143,8 @@ export function ChapterIndex({ headings }: { headings: string[] }) {
 
   return (
     <nav className="sticky bottom-0 hidden bg-linear-to-t from-wall from-[calc(100%-5rem)] to-transparent pb-(--gutter) pt-20 lg:block">
-      <ol className="space-y-1.5 text-caption">
+      {/* Five rows and their gaps, plus the padding that keeps focus outlines inside the scroller. */}
+      <ol ref={list} data-at-start className="pan-y fade-list relative -m-1 max-h-[calc(5lh_+_4*0.375rem_+_0.5rem)] space-y-1.5 p-1 text-caption">
         {headings.map((heading, i) => (
           <li key={heading}>
             <a

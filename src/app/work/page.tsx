@@ -1,13 +1,16 @@
+import { ArrowUpRight, GithubLogo } from "@phosphor-icons/react/dist/ssr";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ViewTransition } from "react";
 import AppIcon from "@/components/AppIcon";
 import PageTransition from "@/components/PageTransition";
+import Rich from "@/components/Rich";
 import ProjectIndex from "@/components/work/ProjectIndex";
 import Showreel from "@/components/work/Showreel";
 import { copy } from "@/content/copy";
 import { projects, type Project } from "@/data/projects";
+import { outboundOf } from "@/lib/work";
 
 export const metadata: Metadata = { title: copy.catalog.title };
 
@@ -26,7 +29,9 @@ export default function WorkIndex() {
             </span>
             <strong className="font-bold">{copy.catalog.brand}</strong>
           </p>
-          <p className="rise mt-4 max-w-[36ch] text-body text-muted">{copy.catalog.intro}</p>
+          <p className="rise mt-4 max-w-[36ch] text-body text-muted">
+            <Rich body={copy.catalog.intro} />
+          </p>
           <ProjectIndex projects={projects.map(({ id, title, icon }) => ({ id, title, icon }))} label={copy.catalog.index} />
           <nav className="mt-8 flex gap-5 text-caption text-muted lg:mt-auto">
             <Link href="/" transitionTypes={["nav-back"]} className={navLink}>
@@ -35,7 +40,7 @@ export default function WorkIndex() {
             <span aria-current="page" className="text-ink">
               {copy.catalog.nav.work}
             </span>
-            <a href="/cv.pdf" download={copy.dock.cvFile} className={navLink}>
+            <a href="/cv.pdf" download={copy.site.cvFile} className={navLink}>
               {copy.catalog.nav.cv}
             </a>
           </nav>
@@ -56,6 +61,8 @@ export default function WorkIndex() {
  * one-liner pinned top left, the work in a looping row centred across the
  * rest of the card. Opening it grows the card to fill the screen as the case
  * study arrives; a coming-soon card has no case study, so it doesn't open.
+ * Its outbound buttons sit top right, level with the icon, as siblings of the
+ * card rather than inside it: a link can't hold links.
  */
 function Card({ project, priority }: { project: Project; priority: boolean }) {
   // The id is the target of the project index; the margin keeps the card off the viewport edge when it lands.
@@ -63,9 +70,14 @@ function Card({ project, priority }: { project: Project; priority: boolean }) {
   // Shared shape; the 1px border keeps grey and outlined chips the same height.
   const chip = "rounded-full border px-2 py-0.5 text-micro";
   const soft = `${chip} border-transparent bg-ink/6 font-normal text-muted`;
+  const outbound = outboundOf(project);
   const body = (
     <>
-      <div className="flex items-center gap-3 px-(--pad) pt-(--pad)">
+      {/* Each button takes 2.75rem (size-9 plus the gap), kept clear so a long title wraps before reaching them. */}
+      <div
+        className="flex items-center gap-3 px-(--pad) pt-(--pad)"
+        style={outbound.length ? { paddingRight: `calc(var(--pad) + ${outbound.length} * 2.75rem)` } : undefined}
+      >
         <AppIcon
           src={project.icon}
           alt={`${project.title} icon`}
@@ -98,18 +110,45 @@ function Card({ project, priority }: { project: Project; priority: boolean }) {
     </>
   );
 
-  // tabIndex lets the index move focus here, though the card itself isn't interactive.
-  if (project.comingSoon)
-    return (
-      <article id={project.id} tabIndex={-1} className={`${className} outline-none`}>
-        {body}
-      </article>
-    );
-  return (
+  const card = project.comingSoon ? (
+    // tabIndex lets the index move focus here, though the card itself isn't interactive.
+    <article id={project.id} tabIndex={-1} className={`${className} outline-none`}>
+      {body}
+    </article>
+  ) : (
     <ViewTransition name={`case-${project.id}`} share="morph" default="none">
       <Link id={project.id} href={`/work/${project.id}`} prefetch transitionTypes={["expand"]} className={className}>
         {body}
       </Link>
     </ViewTransition>
+  );
+  if (!outbound.length) return card;
+
+  return (
+    <div className="relative">
+      {card}
+      {/* As tall as the header row (the icon, or the title over the subtitle with its mt-0.5 when that's taller), so the buttons centre on it. */}
+      <div
+        className="absolute right-(--pad) top-(--pad) flex items-center gap-2"
+        style={{ height: "max(2.75rem, calc(var(--text-heading) * var(--text-heading--line-height) + 0.125rem + var(--text-body) * var(--text-body--line-height)))" }}
+      >
+        {outbound.map(({ href, repo, githubMark }) => {
+          const label = repo ? copy.catalog.github(project.title) : copy.catalog.visit(project.title);
+          return (
+            <a
+              key={href}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={label}
+              title={label}
+              className="grid size-9 place-items-center rounded-full bg-mat ring-1 ring-line transition-transform duration-(--dur-base) ease-spring hover:scale-110"
+            >
+              {githubMark ? <GithubLogo size={16} weight="bold" aria-hidden /> : <ArrowUpRight size={16} weight="bold" aria-hidden />}
+            </a>
+          );
+        })}
+      </div>
+    </div>
   );
 }

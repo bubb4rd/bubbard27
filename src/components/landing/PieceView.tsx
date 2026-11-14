@@ -4,15 +4,9 @@ import PhoneFrame from "@/components/work/PhoneFrame";
 import type { Piece } from "@/content/featured";
 import { widgets } from "./widgets";
 
-const tones = {
-  ink: "bg-ink text-mat",
-  mat: "bg-mat text-ink",
-  accent: "bg-vermilion text-white",
-} as const;
-
 /**
- * One element of a hover choreography, hidden behind the icon until its
- * feature opens. A mockup with `morph` carries that view-transition name into
+ * One element of a hover choreography, hidden in its card's cover until the
+ * card opens. A mockup with `morph` carries that view-transition name into
  * the case study it opens.
  */
 export default function PieceView({ piece, index, morph }: { piece: Piece; index: number; morph?: string }) {
@@ -25,21 +19,6 @@ export default function PieceView({ piece, index, morph }: { piece: Piece; index
       <div aria-hidden style={{ ...place, fontSize: "calc(var(--u) * 1.15)" }} className="piece">
         <Widget />
       </div>
-    );
-  }
-  if ("text" in piece) {
-    const Icon = piece.icon;
-    return (
-      <span
-        aria-hidden
-        style={place}
-        className={`piece inline-flex items-center gap-1.5 whitespace-nowrap px-3 py-1.5 text-caption font-medium shadow-[var(--shadow-soft)] ${tones[piece.tone]} ${
-          piece.kind === "bubble" ? "rounded-[1rem_1rem_1rem_0.3rem]" : "rounded-full"
-        }`}
-      >
-        {Icon && <Icon size={14} weight="bold" />}
-        {piece.text}
-      </span>
     );
   }
 
@@ -80,4 +59,22 @@ export default function PieceView({ piece, index, morph }: { piece: Piece; index
       {image}
     </div>
   );
+}
+
+const isMockup = (piece: Piece) => piece.kind === "card" || piece.kind === "phone" || piece.kind === "screen";
+
+/**
+ * A feature's whole choreography. With a project id, each mockup is named
+ * landing-<id>-<n> (n counts mockups only), matching the case study stage's
+ * overview slots, so a from-landing navigation flies it into place.
+ */
+export function Pieces({ pieces, morphId }: { pieces: Piece[]; morphId?: string }) {
+  return pieces.map((piece, i) => (
+    <PieceView
+      key={i}
+      piece={piece}
+      index={i}
+      morph={morphId && isMockup(piece) ? `landing-${morphId}-${pieces.slice(0, i).filter(isMockup).length}` : undefined}
+    />
+  ));
 }

@@ -1,5 +1,4 @@
-import { CheckCircle, Copy, Cursor, Fingerprint, ShieldCheck } from "@phosphor-icons/react/dist/ssr";
-import Image from "next/image";
+import { CheckCircle, Copy, ShieldCheck } from "@phosphor-icons/react/dist/ssr";
 
 /*
  * Small live-interface mocks that float around a featured project on hover,
@@ -30,46 +29,12 @@ function EloLive() {
   );
 }
 
-/** WKCC Perks: the push every member gets when a deal goes live. */
-function WkccNotification() {
-  return (
-    <div className={`flex w-[21em] items-start gap-[0.7em] rounded-[1.3em] bg-white/90 p-[0.8em] ring-1 ring-black/5 backdrop-blur-xl ${lifted}`}>
-      <span className="relative block size-[2.5em] shrink-0 overflow-hidden rounded-[0.6em]">
-        <Image src="/images/wkcc-favicon.png" alt="" fill sizes="48px" className="object-cover" />
-      </span>
-      <div className="min-w-0 flex-1 text-[0.9em] leading-snug text-black">
-        <div className="flex justify-between text-[0.8em] text-black/45">
-          <span className="font-semibold uppercase tracking-[0.06em]">WKCC Perks</span>
-          <span>now</span>
-        </div>
-        <p className="font-semibold">New perk from Hubba-Hubba</p>
-        <p className="text-black/65">Get ready for Winter BOGO</p>
-      </div>
-    </div>
-  );
-}
-
 /** WKCC Perks: the redeem screen's call to action. */
 function WkccCheckout() {
   return (
     <div className={`flex items-center gap-[0.45em] whitespace-nowrap rounded-full bg-[#7AC143] py-[0.35em] pl-[0.4em] pr-[1.1em] font-semibold text-white ${lifted}`}>
       <CheckCircle weight="fill" size="1.65em" className="shrink-0" />
       Show at checkout
-    </div>
-  );
-}
-
-/** Vaultair: unlocking with Windows Hello. */
-function VaultHello() {
-  return (
-    <div className={`flex w-[17em] items-center gap-[0.8em] rounded-[0.8em] bg-[#1b1c1f] p-[0.8em] text-white ring-1 ring-white/10 ${lifted}`}>
-      <span className="grid size-[2.5em] shrink-0 place-items-center rounded-[0.6em] bg-[#2563EB]/20 text-[#60A5FA]">
-        <Fingerprint size="1.5em" />
-      </span>
-      <div className="leading-snug">
-        <p className="text-[0.95em] font-semibold">Windows Hello</p>
-        <p className="text-[0.78em] text-white/55">Vault unlocked on this PC</p>
-      </div>
     </div>
   );
 }
@@ -94,35 +59,65 @@ function VaultSecret() {
   );
 }
 
-/** Bo: the portrait selected on a design canvas, with its frame size. */
-function BoFrame() {
+// Gliide's Paper & Ink tokens (design/tokens.css in its repo): ink steps, hairline, sunken well, gain green.
+const gliide = {
+  ink: "text-[oklch(0.22_0.008_85)]",
+  ink3: "text-[oklch(0.53_0.009_85)]",
+  card: "rounded-[0.75em] bg-white ring-1 ring-[oklch(0.22_0.008_85/0.08)]",
+  well: "bg-[oklch(0.97_0.004_95)]",
+  graphite: "bg-[oklch(0.44_0.009_85)]",
+  gain: "bg-[oklch(0.52_0.13_150)]",
+  gainText: "text-[oklch(0.48_0.13_150)]",
+};
+
+/** Gliide: a tailored fit score, the posting's before and after, from the tailor screen. */
+function GliideFit() {
   return (
-    <div className="relative w-[15em]">
-      <span className={`relative block aspect-[4/5] overflow-hidden rounded-[0.4em] ${lifted}`}>
-        <Image src="/images/bo-hubbard.jpg" alt="" fill sizes="240px" className="object-cover object-top" />
-      </span>
-      <span className="absolute -inset-[0.35em] ring-[1.5px] ring-vermilion" />
-      {["-left-[0.7em] -top-[0.7em]", "-right-[0.7em] -top-[0.7em]", "-bottom-[0.7em] -left-[0.7em]", "-bottom-[0.7em] -right-[0.7em]"].map((at) => (
-        <span key={at} className={`absolute size-[0.7em] border-[1.5px] border-vermilion bg-white ${at}`} />
-      ))}
-      <span className="absolute left-1/2 top-full mt-[0.8em] -translate-x-1/2 rounded-[0.3em] bg-vermilion px-[0.45em] py-[0.15em] font-mono text-[0.68em] text-white">
-        1080 × 1350
-      </span>
+    <div className={`w-[17em] p-[0.9em] ${gliide.card} ${gliide.ink} ${lifted}`}>
+      <p className={`text-[0.72em] ${gliide.ink3}`}>OneImaging · Full Stack Associate</p>
+      <div className="mt-[0.35em] flex items-baseline gap-[0.4em] font-gliide tabular-nums">
+        <span className={`text-[1.3em] ${gliide.ink3}`}>
+          69<span className="text-[0.6em]">%</span>
+        </span>
+        <span className={gliide.ink3}>›</span>
+        <span className="text-[2.4em] leading-none">
+          88<span className="text-[0.45em]">%</span>
+        </span>
+      </div>
+      <div className={`mt-[0.6em] flex h-[0.3em] overflow-hidden rounded-full ${gliide.well}`}>
+        <span className={`w-[69%] ${gliide.graphite}`} />
+        <span className={`ml-[0.15em] w-[19%] rounded-full ${gliide.gain}`} />
+      </div>
+      <p className="mt-[0.55em] whitespace-nowrap text-[0.72em]">
+        <span className={`font-medium ${gliide.gainText}`}>+19 points</span>
+        <span className={gliide.ink3}> from 4 changes · fits on 1 page</span>
+      </p>
     </div>
   );
 }
 
-/** Bo: a named multiplayer cursor. */
-function BoCursor() {
+/** Gliide: a posting from the daily job feed, its fit now and once tailored. */
+function GliideFeed() {
   return (
-    <div className="flex items-start">
-      <Cursor weight="fill" size="1.7em" className="text-vermilion drop-shadow-sm" />
-      <span className="-ml-[0.2em] mt-[1.2em] rounded-[0.35em_0.9em_0.9em_0.9em] bg-vermilion px-[0.65em] py-[0.25em] text-[0.85em] font-semibold text-white">
-        Bo
-      </span>
+    <div className={`flex w-[21em] items-center gap-[0.7em] p-[0.75em] ${gliide.card} ${gliide.ink} ${lifted}`}>
+      <span className="grid size-[2.2em] shrink-0 place-items-center rounded-[0.5em] bg-[#1f3a5f] font-semibold text-white">N</span>
+      <div className="min-w-0 flex-1 leading-snug">
+        <p className="truncate text-[0.88em] font-medium">Junior Software Engineer</p>
+        <p className={`truncate text-[0.72em] ${gliide.ink3}`}>Northwind Media · Remote</p>
+      </div>
+      <div className="shrink-0 text-right tabular-nums">
+        <p className="text-[0.85em]">
+          <span className={gliide.ink3}>64 › </span>
+          <span className="font-semibold">91</span>
+        </p>
+        <div className={`mt-[0.3em] flex h-[0.25em] w-[4.5em] overflow-hidden rounded-full ${gliide.well}`}>
+          <span className={`w-[64%] ${gliide.graphite}`} />
+          <span className={`w-[27%] ${gliide.gain}`} />
+        </div>
+      </div>
     </div>
   );
 }
 
-export const widgets = { EloLive, WkccNotification, WkccCheckout, VaultHello, VaultSecret, BoFrame, BoCursor };
+export const widgets = { EloLive, WkccCheckout, VaultSecret, GliideFit, GliideFeed };
 export type WidgetName = keyof typeof widgets;

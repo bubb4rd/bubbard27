@@ -2,13 +2,13 @@ import { ArrowRight, ArrowUpRight, X } from "@phosphor-icons/react/dist/ssr";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Fragment, Suspense, ViewTransition } from "react";
+import { Suspense, ViewTransition } from "react";
 import AppIcon from "@/components/AppIcon";
 import { ChapterIndex, ChapterScope, Stage } from "@/components/case/Chapters";
 import PageTransition from "@/components/PageTransition";
+import Rich from "@/components/Rich";
 import MediaRail from "@/components/work/MediaRail";
 import { copy } from "@/content/copy";
-import type { RichText } from "@/data/projects";
 import { blurFor } from "@/lib/blur";
 import { caseStudies, chaptersOf, deviceOf, findProject } from "@/lib/work";
 
@@ -130,25 +130,6 @@ async function CaseStudy({ params }: { params: PageProps<"/work/[id]">["params"]
         <Stage id={project.id} chapters={chapters} device={device} label={label} />
       </div>
     </ChapterScope>
-  );
-}
-
-function Rich({ body }: { body: string | RichText }) {
-  if (typeof body === "string") return body;
-  return body.map((piece, i) =>
-    typeof piece === "string" ? (
-      <Fragment key={i}>{piece}</Fragment>
-    ) : (
-      <a
-        key={i}
-        href={piece.href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-ink underline decoration-line underline-offset-4 transition-colors duration-(--dur-fast) hover:decoration-vermilion"
-      >
-        {piece.text}
-      </a>
-    ),
   );
 }
 

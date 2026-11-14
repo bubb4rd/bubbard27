@@ -13,19 +13,28 @@ export const copy = {
   },
   landing: {
     brand: "BUBBARD",
-    bio: "Developer and designer in Chicago. I build desktop, web, and mobile, and the brands around them.",
+    /** Roles set either side of a vermilion plus; a strip of the skyline sits inline before the city. */
+    title: {
+      roles: ["Developer", "Designer in"],
+      city: "Chicago.",
+      rest: "I build desktop, web, and mobile, and the brands around them.",
+    },
+    recent: "Recent work",
+    about: "About",
+    /** The opening paragraph of the About section on the 2024 and 2026 sites. */
+    aboutBody:
+      "I am a Computer Science graduate based in Chicago, IL. I like to combine technical development with my eye for design, aiming to create products and software that are intuitive and engaging.",
+    location: "Chicago, IL",
+    roles: "Developer, Engineer",
+    hello: "Say hello",
+    /** The tagline, set on two lines: the second ends on the logo and the bold brand, as on the work index. */
+    grad: "Computer Science grad, C/O 2026.",
+    craft: "Engineering, design, craft,",
+    portraitAlt: `${profile.name} in a graduation cap and gown`,
     allWork: "All work",
-    open: "View case",
   },
-  artist: {
-    label: "Work with me",
-    title: profile.name,
-    tagline: "Computer Science grad, C/O 2026. Engineering, design, craft, BUBBARD.",
-    cta: "Say hello",
-    alt: `${profile.name} in a graduation cap and gown`,
-  },
-  dock: {
-    open: "Links",
+  /** Shared across pages: the CV download and the rights line. */
+  site: {
     cv: "CV",
     cvFile: "Bo-Hubbard-CV.pdf",
     rights: "© 2027 BUBBARD",
@@ -35,13 +44,19 @@ export const copy = {
     /** Read as one line, with the BUBBARD logo set inline before the brand. */
     role: "Engineering, design,",
     brand: "BUBBARD.",
-    intro:
-      "Please excuse my terrible writing, there is a reason why I'm in software engineering. Here is some of the processes I've went through and the results of the work I've put in.",
+    intro: [
+      "Shout out ",
+      { text: "@Gianluca Andrisani", href: "https://www.gianlucreates.com/" },
+      " for the inspiration on the casework showcase. Here is some of the processes I've went through and the results of the work I've put in.",
+    ],
     nav: { home: "Home", work: "Work", cv: "CV" },
     upcoming: "In progress",
     comingSoon: "Coming soon",
     /** Accessible name of the project index under the intro. */
     index: "Projects",
+    /** Accessible names and tooltips of a card's outbound buttons. */
+    visit: (title: string) => `Visit ${title}`,
+    github: (title: string) => `${title} on GitHub`,
   },
   work: {
     close: "Close",
