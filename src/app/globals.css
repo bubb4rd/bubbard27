@@ -589,6 +589,67 @@ body:has(.feature:focus-visible) [data-recede]:not(:focus-within) {
   pointer-events: auto;
 }
 
+/* ── Spending: ledger ──────────────────────────────────────────
+   A strip of each service's share of the month, darkest (biggest) first,
+   growing in from the left. The Ledger marks the service under the pointer
+   or focus data-on and itself data-active: that segment turns vermilion,
+   that row goes ink, and everything else falls back. Under a category
+   filter, other segments (data-out, flex-grow 0) collapse and the rest
+   grow to fill the strip. */
+
+@keyframes grow {
+  from {
+    scale: 0 1;
+  }
+}
+.strip-seg {
+  flex-basis: 0;
+  border-radius: 9999px;
+  /* Ink for the biggest, fading evenly to 30% for the smallest however many there are (--n). */
+  background-color: color-mix(in srgb, var(--color-ink) calc(100% - var(--i) * 70% / max(var(--n) - 1, 1)), var(--color-wall));
+  transform-origin: left;
+  animation: grow var(--dur-slow) var(--ease-out) both;
+  animation-delay: calc(var(--dur-fast) + var(--i) * var(--stagger));
+  transition:
+    background-color var(--dur-fast) linear,
+    opacity var(--dur-base) var(--ease-out),
+    flex-grow var(--dur-slow) var(--ease-out),
+    margin var(--dur-slow) var(--ease-out);
+}
+.strip-seg[data-on] {
+  background-color: var(--color-vermilion);
+}
+.ledger[data-active] .strip-seg:not([data-on], [data-out]) {
+  opacity: 0.35;
+}
+/* Outside the current category filter: the negative margin swallows the 3px gap, so a collapsed segment leaves no trace. */
+.strip-seg[data-out] {
+  margin-right: -3px;
+  opacity: 0;
+}
+
+.ledger-row {
+  transition: opacity var(--dur-base) var(--ease-out);
+  &:focus-visible {
+    outline-offset: 0;
+    border-radius: var(--radius-card);
+  }
+}
+.ledger[data-active] .ledger-row:not([data-on]) {
+  opacity: 0.45;
+}
+.ledger-arrow {
+  opacity: 0;
+  translate: -0.2rem 0.2rem;
+  transition:
+    opacity var(--dur-fast) linear,
+    translate var(--dur-base) var(--ease-out);
+}
+.ledger-row[data-on] .ledger-arrow {
+  opacity: 1;
+  translate: 0;
+}
+
 /* ── Page enter ──────────────────────────────────────────────── */
 
 @keyframes rise {
@@ -693,7 +754,8 @@ html:active-view-transition-type(from-landing) {
     --stagger: 0ms;
   }
 
-  .rise {
+  .rise,
+  .strip-seg {
     animation: none;
   }
 

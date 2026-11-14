@@ -57,4 +57,27 @@ export const copy = {
     body: "That page isn't part of the collection. Everything else is one click away.",
     back: "All work",
   },
+  spending: {
+    title: "Spending",
+    description: "Every developer service Bo Hubbard pays for, out in the open.",
+    updated: "Updated",
+    /** Read before the total by screen readers; names the period, and the category when one is filtered. */
+    totalLabel: (period: "monthly" | "yearly", category?: string) =>
+      `${category ? `${category} spending` : "Spending"} per ${period === "yearly" ? "year" : "month"}:`,
+    perMonth: "/mo",
+    perYear: "/yr",
+    about: "about",
+    /** Under the total: the same total in the other period. */
+    summary: (amount: string, per: "month" | "year", count: number) =>
+      `${amount} a ${per} across ${count} ${count === 1 ? "service" : "services"}.`,
+    intro: "Every developer service I pay for, out in the open. Mostly for fun, a little for accountability.",
+    share: "Share of the shown total",
+    /** Accessible name of the category filters; the first one shows everything. */
+    filter: "Filter by category",
+    all: "All",
+    /** Accessible name of the monthly/yearly switch, and its two labels. */
+    period: "Show prices",
+    periods: { monthly: "Monthly", yearly: "Yearly" },
+    note: "Prices in USD. A yearly plan counts as a twelfth each month; a monthly one, twelve times a year.",
+  },
 } as const;

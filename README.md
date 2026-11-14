@@ -12,6 +12,7 @@ npm run build
 - `/`: one screen in the spirit of pixelwrld. A short greeting, three featured app icons and a portrait over a WebGL dot field. Hovering (or keyboard-focusing) one blurs the page, shrinks its icon, springs that project's own pieces out from behind it (screens, phones, cards, chips), swaps its label for a title, tagline and button, and quietly turns the dot field behind it into the project's own: WKCC Perks sends out rings that ping members, Elovate draws a climbing rank line, Vaultair scrambles and locks, the portrait gets a marching selection. The cursor is the page's one light: shadows lean away from it and the icons catch a glare on the side facing it. Below: one line of bio, an `All work` pill and a `•••` dock (profiles and CV).
 - `/work`: the catalog, modelled on gianlucreates. A pinned introduction on the left; on the right one card per project, the same colour as the page and drawn only by a hairline. Name and one-liner on the left of the card, every screen and phone in a row on the right. Pan the row with a trackpad swipe, a tilting wheel or shift+wheel; it stops at its first and last piece, and a soft fade shows on whichever side has more. A row that fits sits centred. Opening a card grows it to fill the screen as the case study arrives.
 - `/work/[id]`: a case study in chapters. Text scrolls on the left with a chapter index pinned at the bottom; a sticky stage on the right blurs from one chapter's row of media to the next, and each row pans like the catalog's. On mobile, each chapter shows its row inline.
+- `/spending`: served at the root of `spending.bohubbard.xyz` (a host rewrite in `next.config.ts`). Every developer service I pay for: the total, a strip of each service's share, category filters (All, then each group in `src/data/spending.ts`, each with an icon), a Monthly/Yearly switch, and one flat list of services, most expensive first. A filter recomputes the totals, service count and shares for that category, and collapses the strip's other segments so the rest fill it. The switch shows every price and the total in that period; a row billed the other way also shows its billed price. Pointing at a row or a segment lights its partner in vermilion. The subdomain needs adding as a domain alias on the Netlify site.
 
 Every image and clip sits on a blurred placeholder until it loads, then fades in. `npm run blur` (run automatically before `dev` and `build`) writes the placeholders to `src/data/blur.json`.
 
@@ -25,6 +26,7 @@ The app icon morphs between pages (React `<ViewTransition>`), forward links slid
 | `src/content/copy.ts` | All interface copy |
 | `src/content/featured.ts` | Which three projects are featured, and each one's hover choreography |
 | `src/data/projects.ts` | Projects: icon, overview media, chapters (`sections`) |
+| `src/data/spending.ts` | Paid services: price, cycle, what each pays for, logo; totals derive from it |
 
 ## Design system
 
